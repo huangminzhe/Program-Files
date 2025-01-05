@@ -12,7 +12,7 @@
             ],
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "gcc-x64",
+            "intelliSenseMode": "windows-gcc-x64",
             "compilerPath": "D:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\\g++.exe",
             "compilerArgs": [
                 "-O2",

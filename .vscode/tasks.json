@@ -10,6 +10,7 @@
 				"-o",
 				"${fileDirname}\\${fileBasenameNoExtension}.exe",
 				"-O2",
+				"-std=c++17",
 				"-Wall",
 				"-g3",
 				"-Wl,--stack=512870936"
