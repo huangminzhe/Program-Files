@@ -10,16 +10,10 @@
                 "UNICODE",
                 "_UNICODE"
             ],
+            "compilerPath": "D:\\msys64\\mingw64\\bin\\gcc.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "gcc-x64",
-            "compilerPath": "C:/Program Files (x86)/Dev-Cpp/MinGW64/bin/g++.exe",
-            "compilerArgs": [
-                "-O2",
-                "-Wall",
-                "-g3",
-                "-Wl,--stack=512870936"
-            ]
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4
