@@ -35,7 +35,7 @@ void mod(int i,int l,int r,int p,int x){
 		return ;
 	}
 	int mid = l + (r - l >> 1);
-	if (i <= l)	mod(i,l,mid,p * 2,x);
+	if (i <= mid)	mod(i,l,mid,p * 2,x);
 	else	mod(i,mid + 1,r,p * 2 + 1,x);
 	up(p);
 }
