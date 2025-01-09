@@ -4,7 +4,7 @@
 		{
 			"type": "cppbuild",
 			"label": "C/C++: g++.exe 生成活动文件",
-			"command": "D:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\\g++.exe",
+			"command": "D:\\msys64\\mingw64\\bin\\g++.exe",
 			"args": [
 				"${file}",
 				"-o",
@@ -16,7 +16,7 @@
 				"-Wl,--stack=512870936"
 			],
 			"options": {
-				"cwd": "D:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin"
+				"cwd": "D:\\msys64\\mingw64\\bin"
 			},
 			"problemMatcher": [
 				"$gcc"
@@ -25,7 +25,7 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "编译器: D:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\\g++.exe"
+			"detail": "编译器: D:\\msys64\\mingw64\\bin\\g++.exe"
 		}
 	]
 }

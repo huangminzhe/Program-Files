@@ -35,7 +35,7 @@ void mod(int i,int l,int r,int p,int x){
 		return ;
 	}
 	int mid = l + (r - l >> 1);
-	if (i <= l)	mod(i,l,mid,p * 2,x);
+	if (i <= mid)	mod(i,l,mid,p * 2,x);
 	else	mod(i,mid + 1,r,p * 2 + 1,x);
 	up(p);
 }
@@ -66,7 +66,7 @@ int main(int argc, char **argv){
 		scanf("%d %d %d",&op,&l,&r);
 		if (op == 1){
 			if (l > r)	swap(l,r);
-			printf("%d\n",query(l,r,1,n,1).mx);
+			printf("%lld\n",query(l,r,1,n,1).mx);
 		}
 		else	mod(l,1,n,1,r);
 	}
