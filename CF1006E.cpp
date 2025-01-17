@@ -23,6 +23,7 @@ class LCA{
 		 */
 		void dfs(int u){
 			dfn[u] = ++t,d[t] = u,st[t][0] = fa[u],sz[u] = 1;
+			sort(a[u].begin(),a[u].end());
 			for (int v : a[u]){
 				if (v != fa[u]){
 					dep[v] = dep[u] + 1;
@@ -74,6 +75,7 @@ class LCA{
 		}
 		inline int get_d(int u){return d[u];}
 		inline int get_size(int u){return sz[u];}
+		inline int get_dfn(int u){return dfn[u];}
 };
 LCA a;
 int main(int argc, char **argv){
@@ -89,7 +91,7 @@ int main(int argc, char **argv){
 		int u,k;
 		cin >> u >> k;
 		if (a.get_size(u) < k)	printf("-1\n");
-		else	printf("%d\n",a.get_d(u + k - 1));
+		else	printf("%d\n",a.get_d(a.get_dfn(u) + k - 1));
 	}
 	return 0;
 }
