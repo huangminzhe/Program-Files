@@ -1,7 +1,6 @@
-// h/LCA.h
-#ifndef LCA_H
-#define LCA_H
 #include <bits/stdc++.h>
+using namespace std;
+const int N = 1e5 + 5,LOG2N = 20;
 /**
  * @brief Lowest Common Ancestor
  */
@@ -71,5 +70,25 @@ class LCA{
 			int k = Log2[dfn[v] - dfn[u]];	// u+1~v
 			return get(st[dfn[u] + 1][k],st[dfn[v] - (1 << k) + 1][k]);
 		}
+		inline int get_dep(int x){return dep[x];}
 };
-#endif
+LCA a;
+int main(int argc, char **argv){
+	int n,m;
+	cin >> n;
+	for (int i = 1;i < n;i++){
+		int u,v;
+		cin >> u >> v;
+		a.push(u,v);		
+	}
+	a.init(n,1);
+	cin >> m;
+	while (m--){
+		int u,v;
+		cin >> u >> v;
+		int lca = a.lca(u,v);
+		u = a.get_dep(u),v = a.get_dep(v),lca = a.get_dep(lca);
+		printf("%d\n",u + v - 2 * lca);
+	}
+	return 0;
+}
