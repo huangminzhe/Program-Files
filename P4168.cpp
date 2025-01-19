@@ -1,7 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int N = 4e4 + 5,SQRTN = 205;
-int n,m,a[N];	// 原
+int n,m,a[N],aa[N],at[N],atn;	// 原
+/*
+aa：原数组；
+at：离散化用的原数组；
+atn：at 的长度；
+a：离散化后。
+*/
 int bn,bs,pos[N],bl[SQRTN],br[SQRTN],t[SQRTN][N],ans[SQRTN][SQRTN];	// 分块
 /*
 bn：块数；
@@ -15,6 +21,13 @@ ans[i][j]：第 i 块到第 j 块间的答案。
 int sd;	// 解码
 inline void decl(int &l){l = ((l + sd - 1) % n + 1);}
 inline void decr(int &r){r = ((r + sd - 1) % n + 1);}
+void disc(){	// 离散化
+	sort(at + 1,at + n + 1);
+	atn = unique(at + 1,at + n + 1) - at - 1;
+	for (int i = 1;i <= n;i++){
+		a[i] = lower_bound(at + 1,at + atn + 1,aa[i]) - at;
+	}
+}
 void init(){
 	bs = sqrt(n);
 	bn = n / bs + (n % bs?1:0);
@@ -93,13 +106,15 @@ int query(int l,int r){
 	int ttai = tt[mid] + t[rb - 1][mid] - t[lb][mid];
 	if (ttai > mx || ttai == mx && mid < a[mxi])
 		mxi = mid;
-	return mxi;
+	return at[mxi];
 }
 int main(int argc, char **argv){
 	cin >> n >> m;
 	for (int i = 1;i <= n;i++){
-		scanf("%d",a + i);
+		scanf("%d",aa + i);
+		at[i] = aa[i];
 	}
+	disc();
 	init();
 	while (m--){
 		int l,r;
