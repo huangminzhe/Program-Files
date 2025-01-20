@@ -39,7 +39,7 @@ class SGT{
 				return ;
 			}
 			size_t mid = l + (r - l >> 1);
-			pd(l,r,p)
+			pd(l,r,p);
 			if (tl <= mid)	add(tl,tr,x,l,mid,p * 2);
 			if (tr > mid)	add(tl,tr,x,mid + 1,r,p * 2 + 1);
 			up(p);
@@ -107,21 +107,21 @@ void init(int s){
 void add(int u,int v,int x){
 	while (top[u] != top[v]){
 		if (dep[top[u]] < dep[top[v]])	swap(u,v);
-		d.add(u,top[u],x);
+		d.add(dfn[u],dfn[top[u]],x);
 		u = fa[top[u]];
 	}
 	if (dep[u] > dep[v])	swap(u,v);
-	d.add(u,v,x);
+	d.add(dfn[u],dfn[v],x);
 }
 int query(int u,int v){
 	ll res = 0;
 	while (top[u] != top[v]){
 		if (dep[top[u]] < dep[top[v]])	swap(u,v);
-		res += d.query(u,top[u]);
+		res += d.query(dfn[u],dfn[top[u]]);
 		u = fa[top[u]];
 	}
 	if (dep[u] > dep[v])	swap(u,v);
-	res += d.query(u,v);
+	res += d.query(dfn[u],dfn[v]);
 	return res;
 }
 int main(int argc, char **argv){
@@ -146,7 +146,10 @@ int main(int argc, char **argv){
 			cin >> y;
 			printf("%d\n",query(x,y) % mod);
 		}else if (op == 3){
+			cin >> z;
+			d.add(dfn[x],dfn[x] + sz[x] - 1,z);
 		}else{
+			printf("%d\n",d.query(dfn[x],dfn[x] + sz[x] - 1) % mod);
 		}
 	}
 	return 0;
