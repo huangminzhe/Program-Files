@@ -1,21 +1,49 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int N = 3e5 + 5,LOG2N = 20;
+int n;
 int p[N];	// 指定路径
 vector<int> a[N];
-int fa[N],st[N][LOG2N],dfn[N],t,d[N],dep[N];
+int fa[N],st[N][LOG2N],Log2[N],dfn[N],t,d[N],dep[N];
+int ans[N],b[N],sz[N];
+inline int get(int x,int y){return dep[x] < dep[y]?x:y;}
 void dfs(int u){
-	dfn[u] = ++t,d[t] = u,st[t][0] = fa[u];
+	dfn[u] = ++t,d[t] = u,st[t][0] = fa[u],sz[u] = 1;
 	for (int v : a[u]){
 		if (v != fa[u]){
 			dep[v] = dep[u] + 1;
 			fa[v] = u;
 			dfs(v);
+			sz[u] += sz[v];
+		}
+	}
+}
+void init(int s){
+	dep[s] = 1;
+	dfs(s);
+	
+	for (int i = 2;i <= n;i++)
+		Log2[i] = Log2[i >> 1] + 1;
+	for (int j = 1;j <= Log2[n];j++)
+		for (int i = 1;i <= n - (1 << j) + 1;i++)
+			st[i][j] = get(st[i][j - 1],st[i + (1 << (j - 1))][j - 1]);
+}
+int lca(int u,int v){
+	if (dfn[u] > dfn[v])	swap(u,v);
+
+	if (u == v)	return u;
+	int k = Log2[dfn[v] - dfn[u]];
+	return get(st[dfn[u] + 1][k],st[dfn[v] - (1 << k) + 1][k]);
+}
+void diff(int u){
+	for (int v : a[u]){
+		if (v != fa[u]){
+			diff(v);
+			b[u] += b[v];
 		}
 	}
 }
 int main(int argc, char **argv){
-	int n;
 	cin >> n;
 	for (int i = 1;i <= n;i++){
 		scanf("%d",p + i);
@@ -23,9 +51,21 @@ int main(int argc, char **argv){
 	for (int i = 1;i < n;i++){
 		int u,v;
 		scanf("%d %d",&u,&v);
-		a[u].emplace_back(v);
-		a[v].emplace_back(u);
+		a[u].push_back(v);
+		a[v].push_back(u);
 	}
-	dfs(1);
+	init(1);
+	for (int i = 1;i < n;i++){
+		int l = lca(p[i],p[i + 1]);
+		b[p[i]]++;
+		b[p[i + 1]]++;
+		b[l]--;
+		b[fa[l]]--;
+		ans[p[i + 1]]--;
+	}
+	diff(1);
+	for (int i = 1;i <= n;i++){
+		printf("%d\n",ans[i] + b[i]);
+	}
 	return 0;
 }
