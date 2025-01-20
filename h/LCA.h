@@ -2,25 +2,13 @@
 #ifndef LCA_H
 #define LCA_H
 #include <bits/stdc++.h>
-/**
- * @brief Lowest Common Ancestor
- */
 class LCA{
 	private:
 		vector<int> a[N];	// 图
 		int dep[N],fa[N];	// 层数；父节点
 		int d[N],dfn[N],t;	// DFS序；时间戳；时间总和
 		int Log2[N],st[N][LOG2N];	// 2的幂次；区间深度最小的结点的ST表
-		/**
-		 * @brief Get the deeper node.
-		 * @param u the first node
-		 * @param v the second node
-		 */
 		inline int get(int u,int v){return dep[u] < dep[v]?u:v;}
-		/**
-		 * @brief Record the depth of nodes by DFS.
-		 * @param u current node
-		 */
 		void dfs(int u){
 			dfn[u] = ++t,d[t] = u,st[t][0] = fa[u];
 			for (int v : a[u]){
@@ -35,11 +23,6 @@ class LCA{
 		LCA(){
 			t = 0;
 		}
-		/**
-		 * @brief Initialize the depth and ST table.
-		 * @param n number of nodes
-		 * @param s tree root
-		 */
 		void init(int n,int s){
 			dep[s] = 1;
 			dfs(s);
@@ -50,20 +33,10 @@ class LCA{
 				for (int i = 1;i <= n - (1 << j) + 1;i++)
 					st[i][j] = get(st[i][j - 1],st[i + (1 << (j - 1))][j - 1]);
 		}
-		/**
-		 * @brief Add an edge between u and v.
-		 * @param u the first node
-		 * @param v the second node
-		 */
 		void push(int u,int v){
 			a[u].push_back(v);
 			a[v].push_back(u);
 		}
-		/**
-		 * @brief Find the LCA of u and v.
-		 * @param u the first node
-		 * @param v the second node
-		 */
 		int lca(int u,int v){
 			if (dfn[u] > dfn[v])	swap(u,v);
 
