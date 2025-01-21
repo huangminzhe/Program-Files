@@ -2,16 +2,17 @@
 using namespace std;
 typedef long long ll;
 const int N = 1e5 + 5,INF = 0x7fffffff;
+int mod;
 template<typename tp>
 class SGT{
 	private:
 		vector<tp> a,d,b;
 		int n;
-		inline void up(int p){d[p] = d[p * 2] + d[p * 2 + 1];}
+		inline void up(int p){d[p] = (d[p * 2] + d[p * 2 + 1]) % mod;}
 		void pd(int l,int r,int p){
 			size_t mid = l + (r - l >> 1);
-			d[p * 2] += b[p] * (mid - l + 1),d[p * 2 + 1] += b[p] * (r - mid);
-			b[p * 2] += b[p],b[p * 2 + 1] += b[p];
+			(d[p * 2] += b[p] * (mid - l + 1)) %= mod,(d[p * 2 + 1] += b[p] * (r - mid)) %= mod;
+			(b[p * 2] += b[p]) %= mod,(b[p * 2 + 1] += b[p]) %= mod;
 			b[p] = 0;
 		}
 		void build(size_t l,size_t r,size_t p){
@@ -30,12 +31,12 @@ class SGT{
 			pd(l,r,p);
 			tp res = 0;
 			if (tl <= mid)	res += query(tl,tr,l,mid,p * 2);
-			if (tr > mid)	res += query(tl,tr,mid + 1,r,p * 2 + 1);
+			if (tr > mid)	(res += query(tl,tr,mid + 1,r,p * 2 + 1)) %= mod;
 			return res;
 		}
 		void add(size_t tl,size_t tr,tp x,size_t l,size_t r,size_t p){
 			if (tl <= l && r <= tr){
-				d[p] += (r - l + 1) * x,b[p] += x;
+				(d[p] += (r - l + 1) * x) %= mod,(b[p] += x) %= mod;
 				return ;
 			}
 			size_t mid = l + (r - l >> 1);
@@ -69,9 +70,9 @@ class SGT{
 		}
 };
 
-int n,m,s,mod;
-vector<ll> a(N);
-vector<int> g[N];
+int n,m,s;
+vector<ll> aa(N);
+vector<int> a(N),g[N];
 SGT<ll> d(N);
 int fa[N],dep[N],hs[N],top[N],dfn[N],t;	// hs：重儿子
 ll sz[N];
@@ -90,24 +91,24 @@ void dfs(int u){
 		}
 	}
 }
-void chn(int u,int t){
-	dfn[u] = ++t,top[u] = t;
-	if (!hs[u])	return;
-	chn(hs[u],t);
+void chn(int u,int tp){
+	dfn[u] = ++t,top[u] = tp,aa[t] = a[u];
+	if (!hs[u])	return ;
+	chn(hs[u],tp);
 	for (int v : g[u])
 		if (v != fa[u] && v != hs[u])
 			chn(v,v);
 }
 void init(int s){
-	d.build(a);
 	dep[s] = 1;
 	dfs(s);
 	chn(s,s);
+	d.build(aa);
 }
 void add(int u,int v,int x){
 	while (top[u] != top[v]){
 		if (dep[top[u]] < dep[top[v]])	swap(u,v);
-		d.add(dfn[u],dfn[top[u]],x);
+		d.add(dfn[top[u]],dfn[u],x);
 		u = fa[top[u]];
 	}
 	if (dep[u] > dep[v])	swap(u,v);
@@ -117,7 +118,7 @@ int query(int u,int v){
 	ll res = 0;
 	while (top[u] != top[v]){
 		if (dep[top[u]] < dep[top[v]])	swap(u,v);
-		res += d.query(dfn[u],dfn[top[u]]);
+		(res += d.query(dfn[top[u]],dfn[u])) %= mod;
 		u = fa[top[u]];
 	}
 	if (dep[u] > dep[v])	swap(u,v);
