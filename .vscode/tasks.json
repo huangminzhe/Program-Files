@@ -13,7 +13,10 @@
 				"-std=c++17",
 				"-Wall",
 				"-g3",
-				"-Wl,--stack=512870936"
+				"-Wl,--stack=512870936",
+				"-static",
+				"-lws2_32",
+				"-g3"
 			],
 			"options": {
 				"cwd": "D:\\msys64\\mingw64\\bin"
