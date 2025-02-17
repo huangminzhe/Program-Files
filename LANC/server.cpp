@@ -12,16 +12,35 @@ using namespace std;
 vector<SOCKET> clients;
 mutex mtx;
 atomic<bool> server_running{1};
+SYSTEMTIME systime;
+DWORD err;
 
 SYSTEMTIME getTime(){
-	SYSTEMTIME time;
-	GetLocalTime(&time);
-	return time;
+	SYSTEMTIME systime;
+	GetLocalTime(&systime);
+	return systime;
+}
+
+string get_client_username(SOCKET sock) {
+    char buffer[256];
+    int bytes = recv(sock, buffer, 255, 0);
+    if (bytes <= 0) return "";
+    return string(buffer, bytes);
 }
 
 void handle_client(SOCKET client_sock) {
+	// 获取用户名
+    string username = get_client_username(client_sock);
+    if (username.empty()) {
+        closesocket(client_sock);
+        return;
+    }
     char buffer[BUFFER_SIZE];
     time_t last_active = time(nullptr);
+
+	// 广播用户加入
+	string join_msg = "[SYSTEM] 用户 " + username + " 加入聊天室";
+	broadcast_message(join_msg);
 
     while (server_running) {
         // 设置接收超时
@@ -42,18 +61,24 @@ void handle_client(SOCKET client_sock) {
             lock_guard<mutex> lock(mtx);
             for (SOCKET sock : clients) {
                 if (sock != client_sock) {
-                    send(sock, buffer, bytes_received, 0);
+					string full_msg = username + ": " + string(buffer, bytes_received);
+                    broadcast_message(full_msg);
                 }
             }
         }
         else {
             // 检测超时（30秒）
             if (time(nullptr) - last_active > 10) {
-                cout << "客户端超时断开\n";
+				systime = getTime();
+                printf("[%02d:%02d:%02d] 客户端超时断开\n",systime.wHour,systime.wMinute,systime.wSecond);
                 break;
             }
         }
     }
+
+	// 广播用户离开
+    string leave_msg = "[SYSTEM] 用户 " + username + " 离开聊天室";
+    broadcast_message(leave_msg);
 
     // 清理客户端
     lock_guard<mutex> lock(mtx);
@@ -83,13 +108,11 @@ void udp_broadcast() {
 }
 
 int main(int argc, char **argv){
-	SYSTEMTIME time;
-	DWORD err;
 	WSADATA wsa;
     if (WSAStartup(MAKEWORD(2,2), &wsa)){
-		time = getTime();
+		systime = getTime();
 		err = GetLastError();
-		printf("[%02d:%02d:%02d] 初始化套接字失败。代码：%lu\n",time.wHour,time.wMinute,time.wSecond,err);
+		printf("[%02d:%02d:%02d] 初始化套接字失败。代码：%lu\n",systime.wHour,systime.wMinute,systime.wSecond,err);
 		WSACleanup();
 		return err;
 	}
@@ -101,9 +124,9 @@ int main(int argc, char **argv){
     tcp_addr.sin_addr.s_addr = INADDR_ANY;
     tcp_addr.sin_port = htons(TCP_PORT);
     if (bind(tcp_sock, (sockaddr*)&tcp_addr, sizeof(tcp_addr))){
-		time = getTime();
+		systime = getTime();
 		err = GetLastError();
-		printf("[%02d:%02d:%02d] 绑定套接字失败。代码：%lu\n",time.wHour,time.wMinute,time.wSecond,err);
+		printf("[%02d:%02d:%02d] 绑定套接字失败。代码：%lu\n",systime.wHour,systime.wMinute,systime.wSecond,err);
 		WSACleanup();
 		return err;
 	}
@@ -112,8 +135,8 @@ int main(int argc, char **argv){
 	// 启动UDP广播线程
     thread(udp_broadcast).detach();
 
-	time = getTime();
-	printf("[%02d:%02d:%02d] 服务器已启动。\n",time.wHour,time.wMinute,time.wSecond);
+	systime = getTime();
+	printf("[%02d:%02d:%02d] 服务器已启动。\n",systime.wHour,systime.wMinute,systime.wSecond);
 
 	while (server_running) {
         SOCKET client_sock = accept(tcp_sock, nullptr, nullptr);
@@ -121,8 +144,8 @@ int main(int argc, char **argv){
             lock_guard<mutex> lock(mtx);
             clients.push_back(client_sock);
             thread(handle_client, client_sock).detach();
-			time = getTime();
-			printf("[%02d:%02d:%02d] 新客户端连接，当前在线：%d\n",time.wHour,time.wMinute,time.wSecond,clients.size());
+			systime = getTime();
+			printf("[%02d:%02d:%02d] 新客户端连接，当前在线：%d\n",systime.wHour,systime.wMinute,systime.wSecond,clients.size());
         }
     }
 

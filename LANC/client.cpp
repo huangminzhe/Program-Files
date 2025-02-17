@@ -10,6 +10,10 @@
 using namespace std;
 
 atomic<bool> is_running{1};
+atomic<bool> is_connected{0};
+atomic<time_t> last_pong{0};
+SYSTEMTIME systime;
+DWORD err;
 
 SYSTEMTIME getTime(){
 	SYSTEMTIME time;
@@ -70,9 +74,62 @@ string select_server(const vector<string>& servers) {
     }
 }
 
+void receive_handler(SOCKET sock) {
+    char buffer[BUFFER_SIZE];
+    while (is_connected) {
+        int bytes = recv(sock, buffer, BUFFER_SIZE, 0);
+        if (bytes > 0) {
+            if (strncmp(buffer, "[PONG]", 6) == 0) {
+                last_pong = time(nullptr);
+                continue;
+            }
+            cout << "\n接收: " << string(buffer, bytes) << endl;
+        }
+        else {
+            is_connected = false;
+            break;
+        }
+    }
+}
+
+void ping_thread(SOCKET sock) {
+    while (is_connected) {
+        if (send(sock, "[PING]", 6, 0) <= 0) {
+            is_connected = false;
+            break;
+        }
+        this_thread::sleep_for(chrono::seconds(5));
+
+        if (time(nullptr) - last_pong > 10) {
+            cerr << "\n服务器无响应，连接已断开！\n";
+            is_connected = false;
+            closesocket(sock);
+            break;
+        }
+    }
+}
+
+void send_file(SOCKET sock, const string& path) {
+    ifstream file(path, ios::binary);
+    if (!file) {
+        cerr << "文件打开失败\n";
+        return;
+    }
+
+    // 发送文件头
+    string header = "[FILE]" + path.substr(path.find_last_of("\\") + 1);
+    send(sock, header.c_str(), header.size(), 0);
+
+    // 发送文件内容
+    char buffer[BUFFER_SIZE];
+    while (!file.eof()) {
+        file.read(buffer, BUFFER_SIZE);
+        send(sock, buffer, file.gcount(), 0);
+    }
+    cout << "文件已发送\n";
+}
+
 int main(int argc, char **argv){
-	SYSTEMTIME time;
-	DWORD err;
     WSADATA wsa;
     WSAStartup(MAKEWORD(2,2), &wsa);
 	if (WSAStartup(MAKEWORD(2,2), &wsa)){
@@ -94,6 +151,43 @@ int main(int argc, char **argv){
 
 		string ip = select_server(servers);
         if (ip.empty()) continue;
+
+		SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+        sockaddr_in addr{};
+        addr.sin_family = AF_INET;
+        addr.sin_addr.s_addr = inet_addr(ip.c_str());
+        addr.sin_port = htons(TCP_PORT);
+
+		if (!connect(sock, (sockaddr*)&addr, sizeof(addr))){
+			cout << "已连接至 " << ip << '\n';
+            is_connected = true;
+            last_pong = time(nullptr);
+
+			thread(receive_handler, sock).detach();
+			thread(ping_thread, sock).detach();
+
+			// 输入循环
+            string input;
+            while (is_connected) {
+                cout << "> ";
+                getline(cin, input);
+
+                if (input == "/exit") break;
+                if (input.substr(0, 9) == "/sendfile") {
+                    send_file(sock, input.substr(10));
+                } else {
+                    send(sock, input.c_str(), input.size(), 0);
+                }
+            }
+
+			is_connected = false;
+            closesocket(sock);
+            if (input == "/exit") break;
+		}else{
+			cerr << "连接失败！\n";
+		}
 	}
+
+	WSACleanup();
 	return 0;
 }
