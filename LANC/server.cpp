@@ -12,6 +12,7 @@ using namespace std;
 vector<SOCKET> clients;
 mutex mtx;
 atomic<bool> server_running{1};
+map<SOCKET, string> client_users;
 SYSTEMTIME systime;
 DWORD err;
 
@@ -21,26 +22,46 @@ SYSTEMTIME getTime(){
 	return systime;
 }
 
-string get_client_username(SOCKET sock) {
-    char buffer[256];
-    int bytes = recv(sock, buffer, 255, 0);
-    if (bytes <= 0) return "";
-    return string(buffer, bytes);
+void broadcast_message(const string& message) {
+    lock_guard<mutex> lock(mtx);
+    
+    auto it = clients.begin();
+    while (it != clients.end()) {
+        SOCKET sock = *it;
+        int result = send(sock, message.c_str(), message.size(), 0);
+        
+        if (result == SOCKET_ERROR) {
+			systime = getTime();
+            cerr << '[' << systime.wHour << ':' << systime.wMinute << ':' << systime.wSecond << 
+					"] 清理失效连接: " << client_users[sock] << endl;
+            closesocket(sock);
+            it = clients.erase(it);
+            client_users.erase(sock);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void handle_client(SOCKET client_sock) {
-	// 获取用户名
-    string username = get_client_username(client_sock);
-    if (username.empty()) {
+    char username_buf[256];
+    int name_len = recv(client_sock, username_buf, 255, 0);
+    if (name_len <= 0) {
         closesocket(client_sock);
         return;
     }
+    
+    string username(username_buf, name_len);
+    {
+        lock_guard<mutex> lock(mtx);
+        client_users[client_sock] = username;
+        clients.push_back(client_sock);
+    }
+
+    broadcast_message("[系统] 用户 " + username + " 加入了聊天室");
+
     char buffer[BUFFER_SIZE];
     time_t last_active = time(nullptr);
-
-	// 广播用户加入
-	string join_msg = "[SYSTEM] 用户 " + username + " 加入聊天室";
-	broadcast_message(join_msg);
 
     while (server_running) {
         // 设置接收超时
@@ -58,16 +79,12 @@ void handle_client(SOCKET client_sock) {
             }
 
             // 广播消息
-            lock_guard<mutex> lock(mtx);
-            for (SOCKET sock : clients) {
-                if (sock != client_sock) {
-					string full_msg = username + ": " + string(buffer, bytes_received);
-                    broadcast_message(full_msg);
-                }
-            }
+            string full_msg = "[" + username + "] " + 
+                                  string(buffer, bytes_received);
+            broadcast_message(full_msg);
         }
         else {
-            // 检测超时（30秒）
+            // 检测超时（10秒）
             if (time(nullptr) - last_active > 10) {
 				systime = getTime();
                 printf("[%02d:%02d:%02d] 客户端超时断开\n",systime.wHour,systime.wMinute,systime.wSecond);
@@ -76,14 +93,15 @@ void handle_client(SOCKET client_sock) {
         }
     }
 
+	{
+        lock_guard<mutex> lock(mtx);
+        auto it = find(clients.begin(), clients.end(), client_sock);
+        if (it != clients.end()) clients.erase(it);
+        client_users.erase(client_sock);
+    }
 	// 广播用户离开
-    string leave_msg = "[SYSTEM] 用户 " + username + " 离开聊天室";
+    string leave_msg = "[系统] 用户 " + username + " 离开聊天室";
     broadcast_message(leave_msg);
-
-    // 清理客户端
-    lock_guard<mutex> lock(mtx);
-    auto it = find(clients.begin(), clients.end(), client_sock);
-    if (it != clients.end()) clients.erase(it);
     closesocket(client_sock);
 }
 
@@ -97,7 +115,7 @@ void udp_broadcast() {
     broadcast_addr.sin_addr.s_addr = inet_addr("255.255.255.255");
     broadcast_addr.sin_port = htons(UDP_PORT);
 
-    const char* discovery_msg = "CHAT_SERVER_V1.4";
+    const char* discovery_msg = "CHAT_SERVER_V2.0";
 
     while (server_running) {
         sendto(udp_sock, discovery_msg, strlen(discovery_msg), 0,
@@ -136,16 +154,12 @@ int main(int argc, char **argv){
     thread(udp_broadcast).detach();
 
 	systime = getTime();
-	printf("[%02d:%02d:%02d] 服务器已启动。\n",systime.wHour,systime.wMinute,systime.wSecond);
+	printf("[%02d:%02d:%02d] 服务器已启动于 %d 端口。将广播服务器地址于 %d 端口。\n",systime.wHour,systime.wMinute,systime.wSecond,TCP_PORT,UDP_PORT);
 
 	while (server_running) {
-        SOCKET client_sock = accept(tcp_sock, nullptr, nullptr);
-        if (client_sock != INVALID_SOCKET) {
-            lock_guard<mutex> lock(mtx);
-            clients.push_back(client_sock);
-            thread(handle_client, client_sock).detach();
-			systime = getTime();
-			printf("[%02d:%02d:%02d] 新客户端连接，当前在线：%d\n",systime.wHour,systime.wMinute,systime.wSecond,clients.size());
+        SOCKET client = accept(tcp_sock, nullptr, nullptr);
+        if (client != INVALID_SOCKET) {
+            thread(handle_client, client).detach();
         }
     }
 
