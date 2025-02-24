@@ -9,21 +9,29 @@ v：当前总体积/PI
 s：当前总表面积
 */
 void dfs(int x,int v,int s){
+	int lr = r[x - 1],lh = h[x - 1];
+	// 体积过大或表面积超过之前的最小值
+	if (v > n || s >= ans)	return ;
+	// 拼尽全力无法完成目标
+	if (v + (lr + m - x) * lr * lh < n)	return;
 	if (x > m){
 		if (v == n)
-			ans = v;
-			// ans = min(ans,v);
+			ans = s;
+			// ans = min(ans,s);
 		return ;
 	}
-	for (int ir = r[x - 1] - 1;ir > 0;ir--){
-		for (int ih = h[x - 1] - 1;ih > 0;ih--){
+	// 圆柱体积：PI*r^2*h
+	// 圆柱侧面积：PI*2*r*h
+	for (int ir = lr - 1;ir > m - x;ir--){
+		if (x == 1)	s = ir * ir;
+		for (int ih = lh - 1;ih > m - x;ih--){
 			v += ir * ir * ih;
-			s += 2 * ir * ih + (x == 1?ir * ir:0);
+			s += 2 * ir * ih;
 			r[x] = ir;
 			h[x] = ih;
 			dfs(x + 1,v,s);
 			v -= ir * ir * ih;
-			s += 2 * ir * ih + (x == 1?ir * ir:0);
+			s -= 2 * ir * ih;
 			r[x] = 0;
 			h[x] = 0;
 		}
@@ -31,7 +39,7 @@ void dfs(int x,int v,int s){
 }
 int main(int argc, char **argv){
 	cin >> n >> m;
-	h[0] = sqrt(n),r[0] = sqrt(n);
+	h[0] = sqrt(n) + 1,r[0] = sqrt(n) + 1;
 	dfs(1,0,0);
 	if (ans == INF)	cout << 0;
 	else	cout << ans;
