@@ -23,12 +23,28 @@ void bfs(int sx,int sy,int spt){
 	while (!q.empty()){
 		int x = q.front().x,y = q.front().y,pt = q.front().pt,stp = q.front().stp;
 		q.pop();
-		if (f[x][y][pt] < stp)	continue;
+		if (stp >= mn)	continue;
+		if (a[x][y] == 'O' && !pt){
+			mn = stp;
+			continue;
+		}
+		for (int i = 0;i < 4;i++){
+			int xi = x + dx[pt][i],yi = y + dy[pt][i],pti = dpt[pt][i];
+			if (!pti){
+				if (f[xi][yi][pti] > stp + 1 && a[xi][yi] != '#' && a[xi][yi] != 'E')	q.push({xi,yi,pti,stp + 1});
+			}else if (pti == 1){
+				if (f[xi][yi][pti] > stp + 1 && a[xi][yi] != '#' && a[xi][yi + 1] != '#')	q.push({xi,yi,pti,stp + 1});
+			}else{
+				if (f[xi][yi][pti] > stp + 1 && a[xi][yi] != '#' && a[xi + 1][yi] != '#')	q.push({xi,yi,pti,stp + 1});
+			}
+		}
 	}
 }
 int main(int argc, char **argv){
 	cin >> n >> m;
 	while (n || m){
+		mn = INF;
+		memset(f,0x7f,sizeof f);
 		for (int i = 1;i <= n;i++){
 			for (int j = 1;j <= m;j++){
 				cin >> a[i][j];
@@ -40,8 +56,9 @@ int main(int argc, char **argv){
 			}
 		}
 		bfs(sx,sy,pt);
+		if (mn == INF)	cout << "Impossible\n";
+		else	printf("%d\n",mn);
 		cin >> n >> m;
 	}
 	return 0;
 }
-
