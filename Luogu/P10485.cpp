@@ -26,17 +26,16 @@ void bfs(int sx,int sy,int spt){
 		if (stp >= mn)	continue;
 		if (a[x][y] == 'O' && !pt){
 			mn = stp;
-			continue;
+			return;
 		}
+		if (!pt && a[x][y] == 'E' || a[x][y] == '#' || 
+			pt == 1 && a[x][y + 1] == '#' || 
+			pt == 2 && a[x][y + 2] == '#' || 
+			f[x][y][pt] < stp)	continue;
+		f[x][y][pt] = stp;
 		for (int i = 0;i < 4;i++){
 			int xi = x + dx[pt][i],yi = y + dy[pt][i],pti = dpt[pt][i];
-			if (!pti){
-				if (f[xi][yi][pti] > stp + 1 && a[xi][yi] != '#' && a[xi][yi] != 'E')	q.push({xi,yi,pti,stp + 1});
-			}else if (pti == 1){
-				if (f[xi][yi][pti] > stp + 1 && a[xi][yi] != '#' && a[xi][yi + 1] != '#')	q.push({xi,yi,pti,stp + 1});
-			}else{
-				if (f[xi][yi][pti] > stp + 1 && a[xi][yi] != '#' && a[xi + 1][yi] != '#')	q.push({xi,yi,pti,stp + 1});
-			}
+			q.push({xi,yi,pti,stp + 1});
 		}
 	}
 }
