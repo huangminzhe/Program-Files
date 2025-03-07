@@ -6,7 +6,7 @@ struct blk{
 const int N = 5e2 + 5,INF = 0x7fffffff;
 int n,m;
 char a[N][N];
-int pt,sx,sy,mn;
+int spt,sx,sy,mn;
 int dx[5][5] = {{-2,1,0,0},
 				{-1,1,0,0},
 				{-1,2,0,0}},
@@ -30,7 +30,7 @@ void bfs(int sx,int sy,int spt){
 		if (a[x][y] == '#' || !pt && a[x][y] == 'E' || 
 			pt == 1 && a[x][y + 1] == '#' || 
 			pt == 2 && a[x + 1][y] == '#' || 
-			f[x][y][pt] < stp)	continue;
+			f[x][y][pt] <= stp)	continue;	// 记得加等于号
 		// printf("%d %d %d %d\n",x,y,pt,stp);
 		f[x][y][pt] = stp;
 		for (int i = 0;i < 4;i++){
@@ -48,13 +48,13 @@ int main(int argc, char **argv){
 			for (int j = 1;j <= m;j++){
 				cin >> a[i][j];
 				if (a[i][j] == 'X'){
-					if (a[i][j - 1] == 'X')	sx = i,sy = j - 1,pt = 1;
-					else if (a[i - 1][j] == 'X')	sx = i - 1,sy = j,pt = 2;
-					else	sx = i,sy = j;
+					if (a[i][j - 1] == 'X')	sx = i,sy = j - 1,spt = 1;
+					else if (a[i - 1][j] == 'X')	sx = i - 1,sy = j,spt = 2;
+					else	sx = i,sy = j,spt = 0;	// 开O2的把`spt=0`加上
 				}
 			}
 		}
-		bfs(sx,sy,pt);
+		bfs(sx,sy,spt);
 		if (mn == INF)	cout << "Impossible\n";
 		else	printf("%d\n",mn);
 		cin >> n >> m;
