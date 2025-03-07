@@ -15,7 +15,7 @@ int dx[5][5] = {{-2,1,0,0},
 				{0,0,-1,1}},
 	dpt[5][5] = {{2,2,1,1},
 				 {1,1,0,0},
-				 {0,0,1,1}};
+				 {0,0,2,2}};
 int f[N][N][5];
 void bfs(int sx,int sy,int spt){
 	queue<blk> q;
@@ -23,15 +23,15 @@ void bfs(int sx,int sy,int spt){
 	while (!q.empty()){
 		int x = q.front().x,y = q.front().y,pt = q.front().pt,stp = q.front().stp;
 		q.pop();
-		if (stp >= mn)	continue;
 		if (a[x][y] == 'O' && !pt){
 			mn = stp;
 			return;
 		}
-		if (!pt && a[x][y] == 'E' || a[x][y] == '#' || 
+		if (a[x][y] == '#' || !pt && a[x][y] == 'E' || 
 			pt == 1 && a[x][y + 1] == '#' || 
-			pt == 2 && a[x][y + 2] == '#' || 
+			pt == 2 && a[x + 1][y] == '#' || 
 			f[x][y][pt] < stp)	continue;
+		// printf("%d %d %d %d\n",x,y,pt,stp);
 		f[x][y][pt] = stp;
 		for (int i = 0;i < 4;i++){
 			int xi = x + dx[pt][i],yi = y + dy[pt][i],pti = dpt[pt][i];
