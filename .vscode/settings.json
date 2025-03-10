@@ -1,5 +1,17 @@
 {
-    "files.associations": {
+    "files.autoSave": "onWindowChange",
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "git.path": "D:\\Program Files\\Git\\bin\\git.exe",
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"code-runner.executorMap": {
+		"cpp": "cd $dir && g++ -fexec-charset=GBK $fileName -o $fileNameWithoutExt -O2 -std=c++17 -Wall -g3 -Wl,--stack=512870936 -static -lws2_32 -g3 && $dir$fileNameWithoutExt"
+	},
+	"code-runner.saveFileBeforeRun": true,
+	"code-runner.runInTerminal": true,
+	"files.associations": {
 		"iostream": "cpp",
 		"*.tcc": "cpp",
 		"cmath": "cpp",
