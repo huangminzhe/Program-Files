@@ -7,7 +7,8 @@
     "editor.insertSpaces": false,
 	"editor.detectIndentation": false,
 	"code-runner.executorMap": {
-		"cpp": "cd $dir && g++ -fexec-charset=GBK $fileName -o $fileNameWithoutExt -O2 -std=c++17 -Wall -g3 -Wl,--stack=512870936 -static -lws2_32 -g3 && $dir$fileNameWithoutExt"
+		"cpp": "cd $dir && g++ -fexec-charset=GBK $fileName -o $fileNameWithoutExt -O2 -std=c++17 -Wall -g3 -Wl,--stack=512870936 -static -lws2_32 -g3 && $dir$fileNameWithoutExt",
+		"python": "python -u $fullFileName"
 	},
 	"code-runner.saveFileBeforeRun": true,
 	"code-runner.runInTerminal": true,
