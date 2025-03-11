@@ -1,62 +1,43 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 105;
-int a[N],cnt;
-int main(int argc, char **argv){
-	int n,m;
-	cin >> n >> m;
-	for (int i = 1;i <= n;i++)	cin >> a[i];
-	if (m == 1){
-		cnt = n;
-		for (int i = 1;i <= n - 3;i++){
-			if (a[i] == a[i + 1] && a[i + 1] == a[i + 2] && a[i + 2] == a[i + 3])	cnt++;
-		}
-	}else if (m == 2){
-		for (int i = 1;i < n;i++){
-			if (a[i] == a[i + 1])	cnt++;
-		}
-	}else if (m == 3){
-		for (int i = 1;i <= n - 2;i++){
-			if (a[i] == a[i + 1] && a[i + 1] + 1 == a[i + 2])	cnt++;
-		}
-		for (int i = 1;i < n;i++){
-			if (a[i] == a[i + 1] + 1)	cnt++;
-		}
-	}else if (m == 4){
-		for (int i = 1;i <= n - 2;i++){
-			if (a[i] == a[i + 1] + 1 && a[i + 1] == a[i + 2])	cnt++;
-		}
-		for (int i = 1;i < n;i++){
-			if (a[i] + 1 == a[i + 1])	cnt++;
-		}
-	}else if (m == 5){
-		for (int i = 1;i <= n - 2;i++){
-			if (a[i] == a[i + 1] && a[i + 1] == a[i + 2])	cnt++;
-			if (a[i] == a[i + 2] && a[i] == a[i + 1] + 1)	cnt++;
-		} 
-		for (int i = 1;i < n;i++){
-			if (a[i] + 1 == a[i + 1])	cnt++;
-			if (a[i] == a[i + 1] + 1)	cnt++;
-		}
-	}else if (m == 6){
-		for (int i = 1;i <= n - 2;i++){
-			if (a[i] + 1 == a[i + 1] && a[i + 1] == a[i + 2])	cnt++;
-			if (a[i] == a[i + 1] && a[i + 1] == a[i + 2])	cnt++;
-		}
-		for (int i = 1;i < n;i++){
-			if (a[i] == a[i + 1])	cnt++;
-			if (a[i] == a[i + 1] + 2)	cnt++;
-		} 
-	}else{
-		for (int i = 1;i <= n - 2;i++){
-			if (a[i] == a[i + 1] && a[i + 1] == a[i + 2] + 1)	cnt++;
-			if (a[i] == a[i + 1] && a[i + 1] == a[i + 2])	cnt++;
-		}
-		for (int i = 1;i < n;i++){
-			if (a[i] == a[i + 1])	cnt++;
-			if (a[i] + 2 == a[i + 1])	cnt++;
+const int N = 1e3 + 5;
+int n,m;
+bool a[N][N];
+int d[N][N],dx[] = {-1,1,0,0},dy[] = {0,0,-1,1};
+queue<pair<int,int>> q;
+void bfs(){
+	while (!q.empty()){
+		int x = q.front().first,y = q.front().second;
+		q.pop();
+		for (int i = 0;i < 4;i++){
+			int xi = x + dx[i],yi = y + dy[i];
+			if (xi >= 1 && xi <= n && yi >= 1 && yi <= m && d[xi][yi] > d[x][y] + 1){
+				d[xi][yi] = d[x][y] + 1;
+				q.push({xi,yi});
+			}
 		}
 	}
-	cout << cnt;
+}
+int main(int argc, char **argv){
+	memset(d,0x3f,sizeof d);
+	cin >> n >> m;
+	for (int i = 1;i <= n;i++){
+		string s;
+		cin >> s;
+		for (int j = 1;j <= m;j++){
+			a[i][j] = s[j - 1] - '0';
+			if (a[i][j]){
+				q.push({i,j});
+				d[i][j] = 0;
+			}
+		}
+	}
+	bfs();
+	for (int i = 1;i <= n;i++){
+		for (int j = 1;j <= m;j++){
+			cout << d[i][j] << " ";
+		}
+		cout << endl;
+	}
 	return 0;
 }
