@@ -2,26 +2,42 @@
 using namespace std;
 const int N = 5e2 + 5;
 struct node{
-	int x,y,stp;
+	int x,y;
 };
 int n,m;
 char a[N][N];
-int dx[] = {-1,1,-1,1},dy[] = {-1,1,1,-1};
-char dc[] = {'\\','\\','/','/'};
-int bfs(int sx,int sy,int sstp){
+int dx[] = {-1,1,-1,1},dy[] = {-1,1,1,-1},gx[] = {0,1,1,0},gy[] = {0,1,0,1};
+char gc[] = {'\\','\\','/','/'};
+int stp[N][N];
+void bfs(int sx,int sy){
+	memset(stp,0x3f,sizeof stp);
+	stp[sx][sy] = 0;
 	deque<node>	q;
-	q.push_back({sx,sy,sstp});
+	q.push_back({sx,sy});
 	while (!q.empty()){
-		int x = q.front().x,y = q.front().y,stp = q.front().stp;
+		int x = q.front().x,y = q.front().y;
 		q.pop_front();
-		if (x == n && y == m)
-			return stp;
-		for (int i = 0;i < 4;i++){}
+		for (int i = 0;i < 4;i++){
+			int xi = x + dx[i],yi = y + dy[i];
+			if (xi < 0 || xi > n || yi < 0 || yi > m)
+				continue;
+			int xg = x + gx[i],yg = y + gy[i];
+			if (a[xg][yg] != gc[i]){
+				if (stp[x][y] + 1 < stp[xi][yi]){
+					stp[xi][yi] = stp[x][y] + 1;
+					q.push_back({xi,yi});
+				}
+			}else
+				if (stp[x][y] < stp[xi][yi]){
+					stp[xi][yi] = stp[x][y];
+					q.push_front({xi,yi});
+				}
+		}
 	}
 }
 int main(int argc, char **argv){
 	cin >> n >> m;
-	if ((n + m) & 1){
+	if (n + m & 1){
 		cout << "NO SOLUTION";
 		return 0;
 	}
@@ -30,6 +46,7 @@ int main(int argc, char **argv){
 			cin >> a[i][j];
 		}
 	}
-	cout << bfs(0,0,0);
+	bfs(0,0);
+	cout << stp[n][m];
 	return 0;
 }
