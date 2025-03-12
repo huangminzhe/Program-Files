@@ -6,7 +6,7 @@ struct node{
 };
 int n,m;
 char a[N][N];
-int dx[] = {-1,1,-1,1},dy[] = {-1,1,1,-1},gx[] = {0,1,1,0},gy[] = {0,1,0,1};
+int dx[] = {-1,1,1,-1},dy[] = {-1,1,-1,1},gx[] = {0,1,1,0},gy[] = {0,1,0,1};
 char gc[] = {'\\','\\','/','/'};
 int stp[N][N];
 void bfs(int sx,int sy){
