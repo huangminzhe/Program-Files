@@ -7,7 +7,8 @@ struct node{
 int n,m;
 char a[N][N];
 int bx,by,gx,gy;
-int gst[N][N],tim[N][N][2];
+int gst[N][N];	// 鬼到的时间
+bool f[N][N][2];	// 是否走过
 int dx[] = {-1,1,0,0},dy[] = {0,0,-1,1};	// 方向数组
 int dgx[] = {-1,1,0,0,-2,2,0,0,-1,1,1,-1},dgy[] = {0,0,-1,1,0,0,-2,2,-1,1,-1,1};	// 怪物方向数组
 void bfsg(node g){
@@ -26,52 +27,42 @@ void bfsg(node g){
 	}
 }
 int bfs(node b,node g){
-	queue<node> q;
-	q.push(g);	// 先搜女生
-	tim[g.x][g.y][0] = 0;
-	while (!q.empty()){
-		int x = q.front().x,y = q.front().y;
-		if (tim[x][y][0] + 1 >= gst[x][y])	continue;	// 被鬼追上了
-		q.pop();
-		for (int i = 0;i < 4;i++){
-			int xi = x + dx[i],yi = y + dy[i];
-			if (xi < 1 || xi > n || yi < 1 || yi > m || 
-				a[xi][yi] == '#' || 
-				tim[x][y][0] + 1 >= gst[xi][yi] || 	// 鬼先到了
-				tim[x][y][0] + 1 >= tim[xi][yi][0])	continue;
-			tim[xi][yi][0] = tim[x][y][0] + 1;
-			q.push({xi,yi});
+	queue<node> qb,qg;
+	qb.push(b);
+	qg.push(g);
+	f[b.x][b.y][0] = 1;
+	f[g.x][g.y][1] = 1;
+	int t = 0;
+	while (!qb.empty() && !qg.empty()){
+		t++;
+		for (int len = qg.size();len;len--){
+			int x = qg.front().x,y = qg.front().y;
+			qg.pop();
+			if (t == gst[x][y] - 1)	continue;	// 被鬼追上了
+			for (int i = 0;i < 4;i++){
+				int xi = x + dx[i],yi = y + dy[i];
+				if (xi < 1 || xi > n || yi < 1 || yi > m || 
+					a[xi][yi] == '#' || 
+					t >= gst[xi][yi] || 	// 鬼先到了
+					f[xi][yi][1])	continue;
+				f[xi][yi][1] = 1;
+				qg.push({xi,yi});
+			}
 		}
-	}
-	for (int i = 1;i <= n;i++){
-		for (int j = 1;j <= m;j++){
-			printf("%d ",tim[i][j][0]);
-		}
-		printf("\n");
-	}
-	for (int i = 1;i <= n;i++){
-		for (int j = 1;j <= m;j++){
-			printf("%d ",gst[i][j]);
-		}
-		printf("\n");
-	}
-	q.push(b);	// 再搜男生
-	tim[b.x][b.y][1] = 0;
-	while (!q.empty()){
 		for (int tt = 3;tt;tt--){
-			for (int len = q.size();len;len--){
-				int x = q.front().x,y = q.front().y;
-				q.pop();
-				if (tim[x][y][1] + 1 >= gst[x][y])	continue;	// 同上
-				if (tim[x][y][1] == tim[x][y][0])	return tim[x][y][0];
+			for (int len = qb.size();len;len--){
+				int x = qb.front().x,y = qb.front().y;
+				qb.pop();
+				if (f[x][y][0])	return t;
+				if (t == gst[x][y] - 1)	continue;	// 被鬼追上了
 				for (int i = 0;i < 4;i++){
 					int xi = x + dx[i],yi = y + dy[i];
 					if (xi < 1 || xi > n || yi < 1 || yi > m || 
 						a[xi][yi] == '#' || 
-						tim[x][y][1] + 1 >= gst[xi][yi] || 
-						tim[x][y][1] + 1 >= tim[xi][yi][1])	continue;
-					tim[xi][yi][1] = tim[x][y][1] + 1;
-					q.push({xi,yi});
+						t >= gst[xi][yi] || 	// 鬼先到了
+						f[xi][yi][0])	continue;
+					f[xi][yi][0] = 1;
+					qb.push({xi,yi});
 				}
 			}
 		}
@@ -84,7 +75,7 @@ int main(int argc, char **argv){
 	while (t--){
 		memset(a,0,sizeof a);
 		memset(gst,0x7f,sizeof gst);
-		memset(tim,0x7f,sizeof tim);
+		memset(f,0,sizeof f);
 		cin >> n >> m;
 		for (int i = 1;i <= n;i++){
 			string s;
