@@ -30,22 +30,24 @@ int bfs(node b,node g){
 	queue<node> qb,qg;
 	qb.push(b);
 	qg.push(g);
-	f[b.x][b.y][0] = 1;
-	f[g.x][g.y][1] = 1;
+	f[g.x][g.y][0] = 1;
+	f[b.x][b.y][1] = 1;
 	int t = 0;
 	while (!qb.empty() && !qg.empty()){
 		t++;
 		for (int len = qg.size();len;len--){
 			int x = qg.front().x,y = qg.front().y;
 			qg.pop();
-			if (t == gst[x][y] - 1)	continue;	// 被鬼追上了
+			if (gst[x][y] <= t)	continue;	// 被鬼追上了
+			// printf("g:t=%d x=%d y=%d\n",t,x,y);
 			for (int i = 0;i < 4;i++){
 				int xi = x + dx[i],yi = y + dy[i];
 				if (xi < 1 || xi > n || yi < 1 || yi > m || 
-					a[xi][yi] == '#' || 
+					a[xi][yi] == 'X' || 
 					t >= gst[xi][yi] || 	// 鬼先到了
-					f[xi][yi][1])	continue;
-				f[xi][yi][1] = 1;
+					f[xi][yi][0])	continue;
+				f[xi][yi][0] = 1;
+				if (f[xi][yi][1])	return t;
 				qg.push({xi,yi});
 			}
 		}
@@ -53,15 +55,16 @@ int bfs(node b,node g){
 			for (int len = qb.size();len;len--){
 				int x = qb.front().x,y = qb.front().y;
 				qb.pop();
-				if (f[x][y][0])	return t;
-				if (t == gst[x][y] - 1)	continue;	// 被鬼追上了
+				if (gst[x][y] <= t)	continue;	// 被鬼追上了
+				// printf("b:t=%d x=%d y=%d\n",t,x,y);
 				for (int i = 0;i < 4;i++){
 					int xi = x + dx[i],yi = y + dy[i];
 					if (xi < 1 || xi > n || yi < 1 || yi > m || 
-						a[xi][yi] == '#' || 
+						a[xi][yi] == 'X' || 
 						t >= gst[xi][yi] || 	// 鬼先到了
-						f[xi][yi][0])	continue;
-					f[xi][yi][0] = 1;
+						f[xi][yi][1])	continue;
+					f[xi][yi][1] = 1;
+					if (f[xi][yi][0])	return t;
 					qb.push({xi,yi});
 				}
 			}
