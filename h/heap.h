@@ -9,36 +9,35 @@ class Heap{
 		vector<tp> hp;
 		int n,sz;
 		bool (*cmp)(tp,tp);
-		void insert(tp x){
-			hp[++n] = x;
-			int p = n;
+		void down(int p){
+			while (p << 1 <= n){
+				int t = p << 1;
+				if (t < n && (*cmp)(hp[t + 1],hp[t])) t++;
+				if ((*cmp)(hp[t],hp[p])){
+					swap(hp[t],hp[p]);
+					p = t;
+				}else	break;
+			}
+		}
+		void up(int p){
 			while (p > 1 && (*cmp)(hp[p],hp[p >> 1])){
 				swap(hp[p],hp[p >> 1]);
 				p >>= 1;
 			}
 		}
+		void insert(tp x){
+			hp[++n] = x;
+			int p = n;
+			up(p);
+		}
 		void pop_head(){
 			hp[1] = hp[n--];
 			int p = 1;
-			while (p << 1 <= n){
-				int t = p << 1;
-				if (t < n && (*cmp)(hp[t + 1],hp[t])) t++;
-				if ((*cmp)(hp[t],hp[p])){
-					swap(hp[t],hp[p]);
-					p = t;
-				}else	break;
-			}
+			down(p);
 		}
 		void remove(int p){
 			hp[p] = hp[n--];
-			while (p << 1 <= n){
-				int t = p << 1;
-				if (t < n && (*cmp)(hp[t + 1],hp[t])) t++;
-				if ((*cmp)(hp[t],hp[p])){
-					swap(hp[t],hp[p]);
-					p = t;
-				}else	break;
-			}
+			down(p);
 		}
 		tp get(int p){
 			return hp[p];
