@@ -9,6 +9,10 @@ class Heap{
 		vector<tp> hp;
 		int n,sz;
 		bool (*cmp)(tp,tp);
+		void check_sz(){
+			while (sz <= n) sz <<= 1;
+			hp.resize(sz);
+		}
 		void down(int p){
 			while (p << 1 <= n){
 				int t = p << 1;
@@ -24,20 +28,6 @@ class Heap{
 				swap(hp[p],hp[p >> 1]);
 				p >>= 1;
 			}
-		}
-		void insert(tp x){
-			hp[++n] = x;
-			int p = n;
-			up(p);
-		}
-		void pop_head(){
-			hp[1] = hp[n--];
-			int p = 1;
-			down(p);
-		}
-		void remove(int p){
-			hp[p] = hp[n--];
-			down(p);
 		}
 		tp get(int p){
 			return hp[p];
@@ -57,14 +47,26 @@ class Heap{
 			hp.resize(sz);
 			cmp = f;
 		}
+		void build(vector<tp> a){
+			n = a.size();
+			check_sz();
+			for (int i = 0;i < n;i++)	hp[i + 1] = a[i];
+			for (int i = n;i > 0;i--)	up(i);
+		}
 		void ins(tp x){
-			insert(x);
+			check_sz();
+			hp[++n] = x;
+			int p = n;
+			up(p);
 		}
 		void pop(){
-			pop_head();
+			hp[1] = hp[n--];
+			int p = 1;
+			down(p);
 		}
 		void rm(int p){
-			remove(p);
+			hp[p] = hp[n--];
+			down(p);
 		}
 		tp top(){
 			return get(1);
