@@ -6,14 +6,10 @@ using namespace std;
 template<typename tp>
 class Heap{
 	private:
-		vector<tp> hp;
-		int n,sz;
+		vector<tp> hp = {0};
 		bool (*cmp)(tp,tp);
-		void check_sz(){
-			while (sz <= n) sz <<= 1;
-			hp.resize(sz);
-		}
 		void down(int p){
+			int n = size();
 			while (p << 1 <= n){
 				int t = p << 1;
 				if (t < n && (*cmp)(hp[t + 1],hp[t])) t++;
@@ -33,40 +29,32 @@ class Heap{
 			return hp[p];
 		}
 	public:
-		Heap(int len){
-			n = 0;
-			sz = 1;
-			while (sz <= len) sz <<= 1;
-			hp.resize(sz);
+		Heap(){
 			(*cmp) = [](tp a,tp b){return a > b;};
 		}
-		Heap(int len,bool (*f)(tp,tp)){
-			n = 0;
-			sz = 1;
-			while (sz <= len) sz <<= 1;
-			hp.resize(sz);
+		Heap(bool (*f)(tp,tp)){
 			cmp = f;
 		}
-		void ins(tp x){
-			check_sz();
-			hp[++n] = x;
-			int p = n;
-			up(p);
+		int size(){
+			return hp.size() - 1;
 		}
-		void pop(){
-			hp[1] = hp[n--];
-			int p = 1;
-			down(p);
+		void ins(tp x){
+			hp.push_back(x);
+			up(size());
 		}
 		void rm(int p){
-			hp[p] = hp[n--];
+			swap(hp[p],hp[size()]);
+			hp.pop_back();
 			down(p);
+		}
+		void pop(){
+			rm(1);
 		}
 		tp top(){
 			return get(1);
 		}
-		size_t size(){
-			return n;
+		tp operator[](int p){
+			return get(p);
 		}
 };
 
