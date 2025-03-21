@@ -47,12 +47,6 @@ class Heap{
 			hp.resize(sz);
 			cmp = f;
 		}
-		void build(vector<tp> a){
-			n = a.size();
-			check_sz();
-			for (int i = 0;i < n;i++)	hp[i + 1] = a[i];
-			for (int i = n;i > 0;i--)	up(i);
-		}
 		void ins(tp x){
 			check_sz();
 			hp[++n] = x;
