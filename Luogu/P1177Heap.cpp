@@ -44,12 +44,6 @@ class Heap{
 			hp.resize(sz);
 			cmp = f;
 		}
-		void build(vector<tp> a){
-			n = a.size();
-			check_sz();
-			for (int i = 0;i < n;i++)	hp[i + 1] = a[i];
-			for (int i = n;i > 0;i--)	up(i);
-		}
 		void ins(tp x){
 			check_sz();
 			hp[++n] = x;
@@ -77,10 +71,11 @@ Heap<int> h(1e5,cmp);
 int main(int argc, char **argv){
 	int n;
 	cin >> n;
-	vector<int> a(n);
-	for (int i = 0;i < n;i++)
-		cin >> a[i];
-	h.build(a);
+	for (int i = 0;i < n;i++){
+		int x;
+		cin >> x;
+		h.ins(x);
+	}
 	for (int i = 0;i < n;i++){
 		cout << h.top() << ' ';
 		h.pop();
