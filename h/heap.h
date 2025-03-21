@@ -65,6 +65,9 @@ class Heap{
 		tp top(){
 			return get(1);
 		}
+		size_t size(){
+			return n;
+		}
 };
 
 #endif
