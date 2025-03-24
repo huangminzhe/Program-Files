@@ -30,7 +30,7 @@ class Heap{
 		}
 	public:
 		Heap(){
-			(*cmp) = [](tp a,tp b){return a > b;};
+			cmp = [](tp a,tp b){return a > b;};
 		}
 		Heap(bool (*f)(tp,tp)){
 			cmp = f;
@@ -39,7 +39,7 @@ class Heap{
 			return hp.size() - 1;
 		}
 		void ins(tp x){
-			hp.push_back(x);
+			hp.emplace_back(x);
 			up(size());
 		}
 		void rm(int p){
