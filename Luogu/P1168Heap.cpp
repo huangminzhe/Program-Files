@@ -27,7 +27,7 @@ class Heap{
 		}
 	public:
 		Heap(){
-			(*cmp) = [](tp a,tp b){return a > b;};
+			cmp = [](tp a,tp b){return a > b;};
 		}
 		Heap(bool (*f)(tp,tp)){
 			cmp = f;
@@ -36,7 +36,7 @@ class Heap{
 			return hp.size() - 1;
 		}
 		void ins(tp x){
-			hp.push_back(x);
+			hp.emplace_back(x);
 			up(size());
 		}
 		void rm(int p){
@@ -60,6 +60,31 @@ bool cmp(int a,int b){
 }
 Heap<int> hb,hs(cmp);
 int main(int argc, char **argv){
-	
+	int n;
+	cin >> n;
+	int x;
+	cin >> x;
+	hs.ins(x);
+	printf("%d\n",x);
+	for (int i = 2;i <= n;i++){
+		cin >> x;
+		if (hs.size() == hb.size()){
+			if (x >= hb.top())	hs.ins(x);
+			else{
+				hs.ins(hb.top());
+				hb.pop();
+				hb.ins(x);
+			}
+		}
+		else{
+			if (x <= hs.top())	hb.ins(x);
+			else{
+				hb.ins(hs.top());
+				hs.pop();
+				hs.ins(x);
+			}
+		}
+		if (i & 1)	printf("%d\n",hs.top());
+	}
 	return 0;
 }
