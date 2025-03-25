@@ -8,10 +8,10 @@ class Heap{
 	private:
 		vector<tp> hp = {0};
 		bool (*cmp)(tp,tp);
-		void down(int p){
-			int n = size();
+		void down(size_t p){
+			size_t n = size();
 			while (p << 1 <= n){
-				int t = p << 1;
+				size_t t = p << 1;
 				if (t < n && (*cmp)(hp[t + 1],hp[t])) t++;
 				if ((*cmp)(hp[t],hp[p])){
 					swap(hp[t],hp[p]);
@@ -19,13 +19,13 @@ class Heap{
 				}else	break;
 			}
 		}
-		void up(int p){
+		void up(size_t p){
 			while (p > 1 && (*cmp)(hp[p],hp[p >> 1])){
 				swap(hp[p],hp[p >> 1]);
 				p >>= 1;
 			}
 		}
-		tp get(int p){
+		tp get(size_t p){
 			return hp[p];
 		}
 	public:
@@ -35,14 +35,14 @@ class Heap{
 		Heap(bool (*f)(tp,tp)){
 			cmp = f;
 		}
-		int size(){
+		size_t size(){
 			return hp.size() - 1;
 		}
 		void ins(tp x){
 			hp.emplace_back(x);
 			up(size());
 		}
-		void rm(int p){
+		void rm(size_t p){
 			swap(hp[p],hp[size()]);
 			hp.pop_back();
 			down(p);
@@ -53,7 +53,7 @@ class Heap{
 		tp top(){
 			return get(1);
 		}
-		tp operator[](int p){
+		tp operator[](size_t p){
 			return get(p);
 		}
 };
