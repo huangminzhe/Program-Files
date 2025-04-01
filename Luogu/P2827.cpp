@@ -1,32 +1,36 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
+const int N = 1e5 + 5,INF = 0x7fffffff;
 int n,m,q,u,v,t;
-int tim;
-struct ew{
-	ll len;
-	int sub;
-	// 当前长度=len+(tim-sub)*q
-};
-bool operator<(const ew &a,const ew &b){
-	return ((a.len + (tim - a.sub) * q) < (b.len + (tim - b.sub) * q)?1:0);
-}
-priority_queue<ew> hp;
+int a[N];
+queue<int> hp[3];
 int main(int argc, char **argv){
 	cin >> n >> m >> q >> u >> v >> t;
 	for (int i = 1;i <= n;i++){
-		int x;
-		scanf("%d",&x);
-		hp.push({x,0});
+		scanf("%d",a + i);
 	}
-	for (tim = 0;tim < m;tim++){
-		ew x = hp.top();
-		hp.pop();
-		ll len = x.len + (tim - x.sub) * q;
-		printf("%lld %d\n",len,x.sub);
-		hp.push({len * u / v,x.sub + 1});
-		hp.push({len - len * u / v,x.sub + 1});
+	sort(a + 1,a + n + 1);
+	reverse(a + 1,a + n + 1);
+	for (int i = 1;i <= n;i++)	hp[0].push(a[i]);
+	for (int i = 0;i < m;i++){
+		pair<int,int> x = max({make_pair(hp[0].empty()?-INF:hp[0].front(),0),
+							   make_pair(hp[1].empty()?-INF:hp[1].front(),1),
+							   make_pair(hp[2].empty()?-INF:hp[2].front(),2)});
+		hp[x.second].pop();
+		ll len = x.first + q * i;
+		if ((i + 1) % t == 0)	printf("%d ",len);
+		hp[1].push(len * u / v - q - q * i);
+		hp[2].push(len - len * u / v - q - q * i);
 	}
 	cout << '\n';
+	for (int i = 1;i <= n + m;i++){
+		pair<int,int> x = max({make_pair(hp[0].empty()?-INF:hp[0].front(),0),
+							   make_pair(hp[1].empty()?-INF:hp[1].front(),1),
+							   make_pair(hp[2].empty()?-INF:hp[2].front(),2)});
+		hp[x.second].pop();
+		ll len = x.first + q * m;
+		if (i % t == 0)	printf("%d ",len);
+	}
 	return 0;
 }
