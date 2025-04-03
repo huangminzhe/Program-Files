@@ -1,5 +1,5 @@
-#ifndef HEAP_H
-#define HEAP_H
+#ifndef HEAP_HPP
+#define HEAP_HPP
 
 #include <bits/stdc++.h>
 using namespace std;
