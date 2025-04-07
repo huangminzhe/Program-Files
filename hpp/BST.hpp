@@ -4,14 +4,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 class BST{
-	private:
+	protected:
 		struct node{
 			size_t l,r;
 			int x;
 		};
 		vector<node> nodes = {{0,0,0}};
 		size_t root;
-		int INF = 0x7fffffff;
+		const int INF = 0x7fffffff;
 		size_t push(int x){
 			nodes.push_back({0,0,x});
 			return nodes.size() - 1;
@@ -61,13 +61,13 @@ class BST{
 			push(-INF),push(INF);
 			root = 1,nodes[root].r = 2;
 		}
-		size_t find(int x){
+		size_t find(int x){	// 返回值为x的编号
 			return get(root,x);
 		}
 		void ins(int x){
 			ins(root,x);
 		}
-		int nxt(int x){
+		size_t nxt(int x){
 			size_t mni = 2,p = root;	// nodes[2].x == INF;
 			while (p){
 				if (nodes[p].x == x){
@@ -83,7 +83,7 @@ class BST{
 			}
 			return mni;
 		}
-		int pre(int x){
+		size_t pre(int x){
 			size_t mxi = 1,p = root;	// nodes[1].x == -INF
 			while (p){
 				if (nodes[p].x == x){
@@ -101,6 +101,9 @@ class BST{
 		}
 		void rm(int x){
 			rm(root,x);
+		}
+		int get(size_t p){	// 返回编号为p的值
+			return nodes[p].x;
 		}
 };
 
