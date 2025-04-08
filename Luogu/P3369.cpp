@@ -65,7 +65,7 @@ class BST{
 			build();
 		}
 		size_t size(){
-			return max(0ULL,nodes.size() - 3);
+			return nodes.size() - 3 < 0?0:nodes.size() - 3;
 		}
 		size_t find(int x){	// 返回值为x的编号
 			return get(root,x);
@@ -122,8 +122,8 @@ class Treap:public BST{
 		}
 		int r2v(size_t p,size_t r){
 			if (!p)	return INF;
-			if (nodes[p].size >= r)	return nodes[p].x;
-			if (nodes[nodes[p].l].size + nodes[p].x >= r)	return nodes[p].x;
+			if (nodes[nodes[p].l].size >= r)	return r2v(nodes[p].l,r);
+			if (nodes[nodes[p].l].size + nodes[p].cnt >= r)	return nodes[p].x;
 			return r2v(nodes[p].r,r - nodes[nodes[p].l].size - nodes[p].cnt);
 		}
 		void ins(size_t &p,int x){
@@ -143,30 +143,54 @@ class Treap:public BST{
 				ins(nodes[p].r,x);
 				if (nodes[p].k < nodes[nodes[p].r].k)	zag(p);
 			}
+			upd(p);
+		}
+		void rm(size_t &p,int x){
+			if (!p)	return ;
+			if (x == nodes[p].x){
+				if (nodes[p].cnt > 1){	// 有副本
+					nodes[p].cnt--,
+					upd(p);
+					return ;
+				}
+				// 没副本
+				if (nodes[p].l || nodes[p].r){	// 不是叶节点
+					if (!nodes[p].r || nodes[nodes[p].l].k > nodes[nodes[p].r].k)	zig(p),rm(nodes[p].r,x);
+					else	zag(p),rm(nodes[p].l,x);
+					upd(p);
+				}else	// 是叶节点
+					p = 0;	// nodes[fa].l（或r）= 0;
+				return ;
+			}
+			x < nodes[p].x?rm(nodes[p].l,x):rm(nodes[p].r,x);
+			upd(p);
 		}
 	public:
 		size_t find(int x){	// 返回值为x的排名
-			return v2r(root,x);
+			return v2r(root,x) - 1;
 		}
-		int get(size_t r){	// 返回排名为p的值
-			return r2v(root,r);
+		int get(size_t r){	// 返回排名为r的值
+			return r2v(root,r + 1);
 		}
 		void zag(size_t &x){	// 左旋
 			size_t y = nodes[x].r;
 			nodes[x].r = nodes[y].l,
 			nodes[y].l = x,
 			x = y;
-			upd(nodes[x].l),upd(y);
+			upd(nodes[x].l),upd(x);
 		}
-		void zig(size_t &y){	// 右旋
-			size_t x = nodes[x].l;
-			nodes[y].l = nodes[x].r,
-			nodes[x].r = x,
-			y = x;
-			upd(y),upd(nodes[x].r);
+		void zig(size_t &x){	// 右旋
+			size_t y = nodes[x].l;
+			nodes[x].l = nodes[y].r,
+			nodes[y].r = x,
+			x = y;
+			upd(nodes[x].r),upd(x);
 		}
 		void ins(int x){
 			ins(root,x);
+		}
+		void rm(int x){
+			rm(root,x);
 		}
 		int operator[](const size_t &p){
 			return nodes[p].x;
@@ -185,6 +209,10 @@ int main(int argc, char **argv){
 		else if (op == 4)	cout << a.get(x) << '\n';
 		else if (op == 5)	cout << a[a.pre(x)] << '\n';
 		else	cout << a[a.nxt(x)] << '\n';
+		for (int j = 1;j <= a.size() + 2;j++){
+			cout << a[j] << ' ';
+		}
+		cout << '\n';
 	}
 	return 0;
 }
