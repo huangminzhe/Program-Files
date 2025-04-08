@@ -6,15 +6,28 @@ using namespace std;
 class BST{
 	protected:
 		struct node{
-			size_t l,r;
+			size_t l,r,k;	// k：关键码
 			int x;
+			int cnt,size;	// cnt：个数；size：子树大小
 		};
-		vector<node> nodes = {{0,0,0}};
+		vector<node> nodes = {{0,0,0,0,0,0}};
 		size_t root;
 		const int INF = 0x7fffffff;
+		size_t randk(){
+			srand(time(0) * size());
+			return rand();
+		}
 		size_t push(int x){
-			nodes.push_back({0,0,x});
+			nodes.push_back({0,0,randk(),x,1,1});
 			return nodes.size() - 1;
+		}
+		void upd(size_t p){
+			nodes[p].size = nodes[nodes[p].l].size + nodes[nodes[p].r].size + nodes[p].cnt;
+		}
+		void build(){
+			push(-INF),push(INF);
+			root = 1,nodes[root].r = 2;
+			upd(root);
 		}
 		size_t get(size_t p,int x){
 			if (!p)	return 0;
@@ -55,11 +68,7 @@ class BST{
 			build();
 		}
 		size_t size(){
-			return nodes.size() - 3;
-		}
-		void build(){
-			push(-INF),push(INF);
-			root = 1,nodes[root].r = 2;
+			return max(0ULL,nodes.size() - 3);
 		}
 		size_t find(int x){	// 返回值为x的编号
 			return get(root,x);
@@ -107,7 +116,61 @@ class BST{
 		}
 };
 class Treap:public BST{
-	
+	private:
+		size_t v2r(size_t p,int x){
+			if (!p)	return 0;
+			if (x == nodes[p].x)	return nodes[nodes[p].l].size + 1;
+			if (x < nodes[p].x)	return v2r(nodes[p].l,x);
+			return v2r(nodes[p].r,x) + nodes[nodes[p].l].size + nodes[p].cnt;
+		}
+		int r2v(size_t p,size_t r){
+			if (!p)	return INF;
+			if (nodes[p].size >= r)	return nodes[p].x;
+			if (nodes[nodes[p].l].size + nodes[p].x >= r)	return nodes[p].x;
+			return r2v(nodes[p].r,r - nodes[nodes[p].l].size - nodes[p].cnt);
+		}
+		void ins(size_t &p,int x){
+			if (!p){
+				p = push(x);	// nodes[fa].l（或r）= p
+				return ;
+			}
+			if (x == nodes[p].x){
+				nodes[p].cnt++,
+				upd(p);
+				return ;
+			}
+			if (x < nodes[p].x){
+				ins(nodes[p].l,x);
+				if (nodes[p].k < nodes[nodes[p].l].k)	zig(p);
+			}else{
+				ins(nodes[p].r,x);
+				if (nodes[p].k < nodes[nodes[p].r].k)	zag(p);
+			}
+		}
+	public:
+		size_t find(int x){	// 返回值为x的排名
+			return v2r(root,x);
+		}
+		int get(size_t r){	// 返回排名为p的值
+			return r2v(root,r);
+		}
+		void zag(size_t &x){	// 左旋
+			size_t y = nodes[x].r;
+			nodes[x].r = nodes[y].l,
+			nodes[y].l = x,
+			x = y;
+			upd(nodes[x].l),upd(y);
+		}
+		void zig(size_t &y){	// 右旋
+			size_t x = nodes[x].l;
+			nodes[y].l = nodes[x].r,
+			nodes[x].r = x,
+			y = x;
+			upd(y),upd(nodes[x].r);
+		}
+		void ins(int x){
+			ins(root,x);
+		}
 };
 
 #endif
