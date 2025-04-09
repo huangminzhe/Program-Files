@@ -10,12 +10,8 @@ class BST{
 		vector<node> nodes = {{0,0,0,0,0,0}};
 		size_t root;
 		const int INF = 0x7fffffff;
-		size_t randk(){
-			srand(time(0) * size());
-			return rand();
-		}
 		size_t push(int x){
-			nodes.push_back({0,0,randk(),x,1,1});
+			nodes.push_back({0,0,(size_t)rand(),x,1,1});
 			return nodes.size() - 1;
 		}
 		void upd(size_t p){
@@ -23,7 +19,7 @@ class BST{
 		}
 		void build(){
 			push(-INF),push(INF);
-			root = 1,nodes[root].r = 2;
+			root = 1,nodes[1].r = 2;
 			upd(root);
 		}
 		size_t get(size_t p,int x){
@@ -60,8 +56,15 @@ class BST{
 			if (x < nodes[p].x)	rm(nodes[p].l,x);
 			else	rm(nodes[p].r,x);
 		}
+		void dbg(size_t p){
+			if (!p)	return ;
+			dbg(nodes[p].l);
+			cout << nodes[p].x << ' ';
+			dbg(nodes[p].r);
+		}
 	public:
 		BST(){
+			srand(time(0));
 			build();
 		}
 		size_t size(){
@@ -110,6 +113,11 @@ class BST{
 		}
 		int get(size_t p){	// 返回编号为p的值
 			return nodes[p].x;
+		}
+		void dbg(){
+			cout << "----------\n";
+			dbg(root);
+			cout << "\n----------\n";
 		}
 };
 class Treap:public BST{
@@ -209,10 +217,7 @@ int main(int argc, char **argv){
 		else if (op == 4)	cout << a.get(x) << '\n';
 		else if (op == 5)	cout << a[a.pre(x)] << '\n';
 		else	cout << a[a.nxt(x)] << '\n';
-		for (int j = 1;j <= a.size() + 2;j++){
-			cout << a[j] << ' ';
-		}
-		cout << '\n';
+		a.dbg();
 	}
 	return 0;
 }
