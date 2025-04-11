@@ -11,7 +11,7 @@ class Treap{
 			int k,x;	// k：关键码
 			int cnt,size;	// cnt：个数；size：子树大小
 		}nodes[SIZE];
-		int root,tot;
+		int root,tot,INF = 0x7fffffff;
 		int push(int x){
 			nodes[++tot].k = rand();
 			nodes[tot].x = x;
@@ -98,7 +98,7 @@ class Treap{
 		}
 		int pre(int x){
 			int p = root;
-			int res = 0;
+			int res = -INF;
 			while (p){
 				if (nodes[p].x < x)	res = nodes[p].x,p = nodes[p].r;
 				else	p = nodes[p].l;
@@ -107,7 +107,7 @@ class Treap{
 		}
 		int nxt(int x){
 			int p = root;
-			int res = 0;
+			int res = INF;
 			while (p){
 				if (nodes[p].x > x)	res = nodes[p].x,p = nodes[p].l;
 				else	p = nodes[p].r;
