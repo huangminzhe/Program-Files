@@ -1,6 +1,8 @@
 #ifndef TREAP_HPP
 #define TREAP_HPP
 
+#include <bits/stdc++.h>
+using namespace std;
 template<int SIZE = int(1e7) + 5>
 class Treap{
 	private:
