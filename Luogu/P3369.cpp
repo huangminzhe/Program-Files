@@ -1,147 +1,32 @@
 #include <bits/stdc++.h>
 using namespace std;
-class BST{
-	protected:
+template<int SIZE = int(1e7) + 5>
+class Treap{
+	private:
 		struct node{
-			size_t l,r,k;	// k：关键码
-			int x;
+			int l,r;
+			int k,x;	// k：关键码
 			int cnt,size;	// cnt：个数；size：子树大小
-		};
-		vector<node> nodes = {{0,0,0,0,0,0}};
-		size_t root;
-		const int INF = 0x7fffffff;
-		size_t push(int x){
-			nodes.push_back({0,0,(size_t)rand(),x,1,1});
-			return nodes.size() - 1;
+		}nodes[SIZE];
+		int root,tot;
+		int push(int x){
+			nodes[++tot].k = rand();
+			nodes[tot].x = x;
+			nodes[tot].cnt = 1;
+			nodes[tot].size = 1;
+			return tot;
 		}
-		void upd(size_t p){
+		void upd(int p){
 			nodes[p].size = nodes[nodes[p].l].size + nodes[nodes[p].r].size + nodes[p].cnt;
 		}
-		void build(){
-			push(-INF),push(INF);
-			root = 1,nodes[1].r = 2;
-			upd(root);
-		}
-		size_t get(size_t p,int x){
-			if (!p)	return 0;
-			if (x == nodes[p].x)	return p;
-			return (x < nodes[p].x?get(nodes[p].l,x):get(nodes[p].r,x));
-		}
-		void ins(size_t &p,int x){
+		void ins(int &p,int x){
 			if (!p){
 				p = push(x);	// nodes[fa].l（或r）= p
 				return ;
 			}
-			if (x < nodes[p].x)	ins(nodes[p].l,x);
-			else	ins(nodes[p].r,x);
-		}
-		void rm(size_t &p,int x){
-			if (!p)	return ;
-			if (nodes[p].x == x){
-				if (nodes[p].l && nodes[p].r){	// 有两个子树
-					size_t scs = nodes[p].r;
-					while (nodes[scs].l)	scs = nodes[scs].l;
-					rm(nodes[p].r,nodes[scs].x);
-					nodes[scs].l = nodes[p].l,nodes[scs].r = nodes[p].r;
-					p = scs;
-				}else{
-					if (nodes[p].l){	// 只有左子树
-						p = nodes[p].l;	// nodes[fa].l（或r）= nodes[p].l;
-					}else{	// 只有右子树
-						p = nodes[p].r;	// nodes[fa].l（或r）= nodes[p].l;
-					}
-				}
-				return ;
-			}
-			if (x < nodes[p].x)	rm(nodes[p].l,x);
-			else	rm(nodes[p].r,x);
-		}
-		void dbg(size_t p){
-			if (!p)	return ;
-			dbg(nodes[p].l);
-			cout << nodes[p].x << ' ';
-			dbg(nodes[p].r);
-		}
-	public:
-		BST(){
-			srand(time(0));
-			build();
-		}
-		size_t size(){
-			return nodes.size() - 3 < 0?0:nodes.size() - 3;
-		}
-		size_t find(int x){	// 返回值为x的编号
-			return get(root,x);
-		}
-		void ins(int x){
-			ins(root,x);
-		}
-		size_t nxt(int x){
-			size_t mni = 2,p = root;	// nodes[2].x == INF;
-			while (p){
-				if (nodes[p].x == x){
-					if (nodes[p].r){
-						p = nodes[p].r;
-						while (nodes[p].l)	p = nodes[p].l;
-						mni = p;
-					}
-					break;
-				}
-				if (nodes[p].x > x && nodes[p].x < nodes[mni].x)	mni = p;
-				p = x < nodes[p].x?nodes[p].l:nodes[p].r;
-			}
-			return mni;
-		}
-		size_t pre(int x){
-			size_t mxi = 1,p = root;	// nodes[1].x == -INF
-			while (p){
-				if (nodes[p].x == x){
-					if (nodes[p].l){
-						p = nodes[p].l;
-						while (nodes[p].r)	p = nodes[p].r;
-						mxi = p;
-					}
-					break;
-				}
-				if (nodes[p].x < x && nodes[p].x > nodes[mxi].x)	mxi = p;
-				p = x < nodes[p].x?nodes[p].l:nodes[p].r;
-			}
-			return mxi;
-		}
-		void rm(int x){
-			rm(root,x);
-		}
-		int get(size_t p){	// 返回编号为p的值
-			return nodes[p].x;
-		}
-		void dbg(){
-			cout << "----------\n";
-			dbg(root);
-			cout << "\n----------\n";
-		}
-};
-class Treap:public BST{
-	private:
-		size_t v2r(size_t p,int x){
-			if (!p)	return 0;
-			if (x == nodes[p].x)	return nodes[nodes[p].l].size + 1;
-			if (x < nodes[p].x)	return v2r(nodes[p].l,x);
-			return v2r(nodes[p].r,x) + nodes[nodes[p].l].size + nodes[p].cnt;
-		}
-		int r2v(size_t p,size_t r){
-			if (!p)	return INF;
-			if (nodes[nodes[p].l].size >= r)	return r2v(nodes[p].l,r);
-			if (nodes[nodes[p].l].size + nodes[p].cnt >= r)	return nodes[p].x;
-			return r2v(nodes[p].r,r - nodes[nodes[p].l].size - nodes[p].cnt);
-		}
-		void ins(size_t &p,int x){
-			if (!p){
-				p = push(x);	// nodes[fa].l（或r）= p
-				return ;
-			}
+			nodes[p].size++;
 			if (x == nodes[p].x){
-				nodes[p].cnt++,
-				upd(p);
+				nodes[p].cnt++;
 				return ;
 			}
 			if (x < nodes[p].x){
@@ -151,48 +36,56 @@ class Treap:public BST{
 				ins(nodes[p].r,x);
 				if (nodes[p].k < nodes[nodes[p].r].k)	zag(p);
 			}
-			upd(p);
 		}
-		void rm(size_t &p,int x){
+		void rm(int &p,int x){
 			if (!p)	return ;
+			nodes[p].size--;
 			if (x == nodes[p].x){
-				if (nodes[p].cnt > 1){	// 有副本
-					nodes[p].cnt--,
-					upd(p);
+				if (nodes[p].cnt > 1){
+					nodes[p].cnt--;
 					return ;
 				}
-				// 没副本
-				if (nodes[p].l || nodes[p].r){	// 不是叶节点
-					if (!nodes[p].r || nodes[nodes[p].l].k > nodes[nodes[p].r].k)	zig(p),rm(nodes[p].r,x);
-					else	zag(p),rm(nodes[p].l,x);
-					upd(p);
-				}else	// 是叶节点
-					p = 0;	// nodes[fa].l（或r）= 0;
+				if (!(nodes[p].l && nodes[p].r))	p = nodes[p].l + nodes[p].r;
+				else if (nodes[nodes[p].l].k > nodes[nodes[p].r].k){
+					zig(p);
+					rm(nodes[p].r,x);
+				}else{
+					zag(p);
+					rm(nodes[p].l,x);
+				}
 				return ;
 			}
-			x < nodes[p].x?rm(nodes[p].l,x):rm(nodes[p].r,x);
-			upd(p);
+			if (x < nodes[p].x)	rm(nodes[p].l,x);
+			else	rm(nodes[p].r,x);
+		}
+		int v2r(int p,int x){
+			if (!p)	return 1;	// 如果x不在合集，得多返回1（定义）
+			if (x == nodes[p].x)	return nodes[nodes[p].l].size + 1;
+			if (x < nodes[p].x)	return v2r(nodes[p].l,x);
+			return v2r(nodes[p].r,x) + nodes[nodes[p].l].size + nodes[p].cnt;
+		}
+		int r2v(int p,int r){
+			if (!p)	return 0;
+			if (nodes[nodes[p].l].size >= r)	return r2v(nodes[p].l,r);
+			if (nodes[nodes[p].l].size + nodes[p].cnt >= r)	return nodes[p].x;
+			return r2v(nodes[p].r,r - nodes[nodes[p].l].size - nodes[p].cnt);
 		}
 	public:
-		size_t find(int x){	// 返回值为x的排名
-			return v2r(root,x) - 1;
+		void zig(int &p){	// 右旋
+			int q = nodes[p].l;
+			nodes[p].l = nodes[q].r,
+			nodes[q].r = p,
+			nodes[q].size = nodes[p].size;
+			upd(p);
+			p = q;
 		}
-		int get(size_t r){	// 返回排名为r的值
-			return r2v(root,r + 1);
-		}
-		void zag(size_t &x){	// 左旋
-			size_t y = nodes[x].r;
-			nodes[x].r = nodes[y].l,
-			nodes[y].l = x,
-			x = y;
-			upd(nodes[x].l),upd(x);
-		}
-		void zig(size_t &x){	// 右旋
-			size_t y = nodes[x].l;
-			nodes[x].l = nodes[y].r,
-			nodes[y].r = x,
-			x = y;
-			upd(nodes[x].r),upd(x);
+		void zag(int &p){	// 左旋
+			int q = nodes[p].r;
+			nodes[p].r = nodes[q].l,
+			nodes[q].l = p,
+			nodes[q].size = nodes[p].size;
+			upd(p);
+			p = q;
 		}
 		void ins(int x){
 			ins(root,x);
@@ -200,11 +93,32 @@ class Treap:public BST{
 		void rm(int x){
 			rm(root,x);
 		}
-		int operator[](const size_t &p){
-			return nodes[p].x;
+		int pre(int x){
+			int p = root;
+			int res = 0;
+			while (p){
+				if (nodes[p].x < x)	res = nodes[p].x,p = nodes[p].r;
+				else	p = nodes[p].l;
+			}
+			return res;
+		}
+		int nxt(int x){
+			int p = root;
+			int res = 0;
+			while (p){
+				if (nodes[p].x > x)	res = nodes[p].x,p = nodes[p].l;
+				else	p = nodes[p].r;
+			}
+			return res;
+		}
+		int find(int x){	// 返回值x的排名（定义为比x小的数的个数+1）
+			return v2r(root,x);
+		}
+		int get(int r){	// 返回排名r的值
+			return r2v(root,r);
 		}
 };
-Treap a;
+Treap<int(1e5) + 5> a;
 int main(int argc, char **argv){
 	int n;
 	cin >> n;
@@ -215,9 +129,8 @@ int main(int argc, char **argv){
 		else if (op == 2)	a.rm(x);
 		else if (op == 3)	cout << a.find(x) << '\n';
 		else if (op == 4)	cout << a.get(x) << '\n';
-		else if (op == 5)	cout << a[a.pre(x)] << '\n';
-		else	cout << a[a.nxt(x)] << '\n';
-		a.dbg();
+		else if (op == 5)	cout << a.pre(x) << '\n';
+		else	cout << a.nxt(x) << '\n';
 	}
 	return 0;
 }

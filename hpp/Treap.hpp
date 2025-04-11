@@ -60,7 +60,7 @@ class Treap{
 			else	rm(nodes[p].r,x);
 		}
 		int v2r(int p,int x){
-			if (!p)	return 0;
+			if (!p)	return 1;	// 如果x不在合集，得多返回1（定义）
 			if (x == nodes[p].x)	return nodes[nodes[p].l].size + 1;
 			if (x < nodes[p].x)	return v2r(nodes[p].l,x);
 			return v2r(nodes[p].r,x) + nodes[nodes[p].l].size + nodes[p].cnt;
@@ -112,7 +112,7 @@ class Treap{
 			}
 			return res;
 		}
-		int find(int x){	// 返回值x的排名
+		int find(int x){	// 返回值x的排名（定义为比x小的数的个数+1）
 			return v2r(root,x);
 		}
 		int get(int r){	// 返回排名r的值
