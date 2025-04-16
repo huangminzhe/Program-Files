@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 template<int SIZE = int(1e7) + 5>
 class Treap{
 	private:
@@ -59,7 +60,7 @@ class Treap{
 			else	rm(nodes[p].r,x);
 		}
 		int v2r(int p,int x){
-			if (!p)	return 1;	// 如果x不在合集，得多返回1（定义）
+			if (!p)	return -INF;
 			if (x == nodes[p].x)	return nodes[nodes[p].l].size + 1;
 			if (x < nodes[p].x)	return v2r(nodes[p].l,x);
 			return v2r(nodes[p].r,x) + nodes[nodes[p].l].size + nodes[p].cnt;
@@ -117,19 +118,53 @@ class Treap{
 		int get(int r){	// 返回排名r的值
 			return r2v(root,r);
 		}
+		int size(){
+			return nodes[root].size;
+		}
 };
-const int N = 8e4 + 5;
-Treap<N> l,c;
-int main(int argc, char *argv){
+const int N = 8e4 + 5,INF = 0x7fffffff,MOD = 1e6;
+Treap<N> l,c;	// 领养者，宠物
+ll sum;
+int main(int argc, char **argv){
 	int n;
 	cin >> n;
 	for (int i = 1;i <= n;i++){
 		bool op;int x;
 		cin >> op >> x;
 		if (op){
-			c.ins(x);
+			if (!c.size())	l.ins(x);
+			else{
+				ll pre = c.pre(x),nxt = c.nxt(x);
+				if (pre == -INF && nxt == INF)	continue;
+				if (c.find(x) > 0)
+					c.rm(x);
+				else if (x - pre <= nxt - x){
+					sum += x - pre;
+					c.rm(pre);
+				}else{
+					sum += nxt - x;
+					c.rm(nxt);
+				}
+			}
+		}else{
+			if (!l.size())	c.ins(x);
+			else{
+				ll pre = l.pre(x),nxt = l.nxt(x);
+				if (pre == -INF && nxt == INF)	continue;
+				if (l.find(x) > 0)
+					l.rm(x);
+				else if (x - pre <= nxt - x){
+					sum += x - pre;
+					l.rm(pre);
+				}else{
+					sum += nxt - x;
+					l.rm(nxt);
+				}
+			}
 		}
-		else	l.ins(x);
+		sum %= MOD;
+		// printf(" %lld\n",sum);
 	}
+	cout << sum;
 	return 0;
 }
