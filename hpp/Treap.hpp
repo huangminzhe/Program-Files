@@ -90,6 +90,9 @@ class Treap{
 			p = q;
 		}
 	public:
+		Treap(){
+			srand(time(0));
+		}
 		void ins(int x){
 			ins(root,x);
 		}
