@@ -73,7 +73,6 @@ class Treap{
 			if (nodes[nodes[p].l].size + nodes[p].cnt >= r)	return nodes[p].x;
 			return r2v(nodes[p].r,r - nodes[nodes[p].l].size - nodes[p].cnt);
 		}
-	public:
 		void zig(int &p){	// 右旋
 			int q = nodes[p].l;
 			nodes[p].l = nodes[q].r,
@@ -90,6 +89,7 @@ class Treap{
 			upd(p);
 			p = q;
 		}
+	public:
 		void ins(int x){
 			ins(root,x);
 		}
