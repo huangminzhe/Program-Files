@@ -124,5 +124,94 @@ class Treap{
 			return r2v(root,r);
 		}
 };
+template<int SIZE = int(1e7) + 5>
+class fhq_Treap{
+	private:
+		struct node{
+			int l,r;
+			int k,x;
+			int size;
+		}nodes[SIZE];
+		int root,tot,INF = 0x7fffffff;
+		int push(int x){
+			nodes[++tot] = {0,0,rand(),x,1};
+			return tot;
+		}
+		void upd(int p){
+			nodes[p].size = nodes[nodes[p].l].size + nodes[nodes[p].r].size + 1;
+		}
+		void split(int p,int x,int &l,int &r){
+			if (!p)	l = r = 0;
+			else if (nodes[p].x <= x){
+				l = p;
+				split(nodes[p].r,x,nodes[l].r,r);
+			}else{
+				r = p;
+				split(nodes[p].l,x,l,nodes[r].l);
+			}
+			upd(p);
+		}
+		int merge(int l,int r){
+			if (!l || !r)	return l + r;
+			if (nodes[l].k < nodes[r].k){
+				nodes[l].r = merge(nodes[l].r,r);
+				upd(l);
+				return l;
+			}else{
+				nodes[r].l = merge(l,nodes[r].l);
+				upd(r);
+				return r;
+			}
+		}
+		int get(int p,int x){
+			int lsz = nodes[nodes[p].l].size;
+			if (x == lsz + 1)	return nodes[p].x;
+			if (x <= lsz)	return get(nodes[p].l,x);
+			return get(nodes[p].r,x - lsz - 1);
+		}
+	public:
+		fhq_Treap(){
+			srand(time(0));
+		}
+		int size(){
+			return nodes[root].size;
+		}
+		void ins(int x){
+			int l,r;
+			split(root,x,l,r);
+			root = merge(merge(l,push(x)),r);
+		}
+		void rm(int x){
+			int l,r1,r2;
+			split(root,x,l,r1);
+			split(l,x - 1,l,r2);
+			r2 = merge(nodes[r2].l,nodes[r2].r);
+			root = merge(merge(l,r2),r1);
+		}
+		int find(int x){	// 返回值x的排名（定义为比x小的数的个数+1）
+			int l,r;
+			split(root,x - 1,l,r);
+			int res = nodes[l].size + 1;
+			root = merge(l,r);
+			return res;
+		}
+		int get(int r){	// 返回排名r的值
+			return get(root,r);
+		}
+		int pre(int x){
+			int l,r;
+			split(root,x - 1,l,r);
+			int res = get(l,nodes[l].size);
+			root = merge(l,r);
+			return res;
+		}
+		int nxt(int x){
+			int l,r;
+			split(root,x,l,r);
+			int res = get(r,1);
+			root = merge(l,r);
+			return res;
+		}
+};
 
 #endif
