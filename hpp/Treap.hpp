@@ -168,12 +168,12 @@ class fhq_Treap{
 		int merge(int l,int r){
 			if (!l || !r)	return l + r;
 			if (nodes[l].k < nodes[r].k){
-				pd(x);
+				pd(l);
 				nodes[l].r = merge(nodes[l].r,r);
 				upd(l);
 				return l;
 			}else{
-				pd(y);
+				pd(r);
 				nodes[r].l = merge(l,nodes[r].l);
 				upd(r);
 				return r;

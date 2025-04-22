@@ -8,19 +8,32 @@ class fhq_Treap{
 			int k,x;
 			int size;
 		}nodes[SIZE];
+		bool f[SIZE];	// 懒标记
+		int b[SIZE];	// 懒标记值
 		int root,tot,INF = 0x7fffffff;
-		int push(int x){
-			nodes[++tot] = {0,0,rand(),x,1};
-			return tot;
+		void pd(int p){
+			if (!p || !f[p])	return ;
+			nodes[p].x += b[p];
+			f[nodes[p].l] = 1,b[nodes[p].l] += b[p];
+			f[nodes[p].r] = 1,b[nodes[p].r] += b[p];
+			f[p] = 0,b[p] = 0;
 		}
 		void upd(int p){
 			nodes[p].size = nodes[nodes[p].l].size + nodes[nodes[p].r].size + 1;
 		}
+		int push(int x){
+			nodes[++tot] = {0,0,rand(),x,1};
+			return tot;
+		}
 		void split(int p,int x,int &l,int &r){
-			if (!p)	l = r = 0;
-			else if (nodes[p].x <= x){
+			if (!p){
+				l = r = 0;
+				return ;
+			}
+			pd(p);
+			if (nodes[p].x < x){
 				l = p;
-				split(nodes[p].r,x,nodes[l].r,r);
+				split(nodes[p].r,x,nodes[p].r,r);
 			}else{
 				r = p;
 				split(nodes[p].l,x,l,nodes[r].l);
@@ -30,10 +43,12 @@ class fhq_Treap{
 		int merge(int l,int r){
 			if (!l || !r)	return l + r;
 			if (nodes[l].k < nodes[r].k){
+				pd(l);
 				nodes[l].r = merge(nodes[l].r,r);
 				upd(l);
 				return l;
 			}else{
+				pd(r);
 				nodes[r].l = merge(l,nodes[r].l);
 				upd(r);
 				return r;
