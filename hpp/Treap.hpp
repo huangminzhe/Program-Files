@@ -93,6 +93,9 @@ class Treap{
 		Treap(){
 			srand(time(0));
 		}
+		int size(){
+			return nodes[root].size;
+		}
 		void ins(int x){
 			ins(root,x);
 		}
@@ -188,9 +191,6 @@ class fhq_Treap{
 	public:
 		fhq_Treap(){
 			srand(time(0));
-		}
-		int size(){
-			return nodes[root].size;
 		}
 		void ins(int x){
 			int l,r;

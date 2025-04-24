@@ -2,7 +2,7 @@
 using namespace std;
 template<int SIZE = int(1e7) + 5>
 class Treap{
-	private:
+	protected:
 		struct node{
 			int l,r;
 			int k,x;	// k：关键码
@@ -90,6 +90,9 @@ class Treap{
 		Treap(){
 			srand(time(0));
 		}
+		int size(){
+			return nodes[root].size;
+		}
 		void ins(int x){
 			ins(root,x);
 		}
@@ -121,37 +124,59 @@ class Treap{
 			return r2v(root,r);
 		}
 };
-template<int SIZE = int(1e7) + 5>
-class p_Treap:public Treap<SIZE>{
+class p_Treap:public Treap<int(3e5) + 5>{
 	private:
 		int mn,cnt = 0;
-		void set(int &p,int x){
+		void add(int &p,int x){
+			if (!p)	return ;
 			if (nodes[p].x >= mn){
 				nodes[p].x += x;
 				if (nodes[p].x < mn)	cnt++;
 			}
-			if (nodes[p].l)	add(nodes[p].l,x);
-			if (nodes[p].r)	add(nodes[p].r,x);
+			add(nodes[p].l,x);
+			add(nodes[p].r,x);
 		}
-		int topk(int p,int k){
+		int r2v(int p,int r){
 			if (!p)	return 0;
-			if ()
+			if (nodes[nodes[p].r].size >= r)	return r2v(nodes[p].r,r);
+			if (nodes[nodes[p].r].size + nodes[p].cnt == r)	return nodes[p].x;
+			return r2v(nodes[p].l,r - nodes[nodes[p].r].size - nodes[p].cnt);
 		}
 	public:
 		p_Treap(int m){
 			mn = m;
 			srand(time(0));
 		}
-		void set(int x){
-			set(root,x);
+		void add(int x){
+			add(root,x);
 		}
 		int get_lv(){	// 离开的人数
 			return cnt;
 		}
-		int topk(int k){
-			return topk(root,k);
+		int find(int x){
+			return r2v(root,x);
 		}
 };
+const int N = 3e5 + 5;
 int main(int argc, char **argv){
+	int n,m;
+	cin >> n >> m;
+	p_Treap a(m);
+	while (n--){
+		char op;int x;
+		cin >> op >> x;
+		if (op == 'I')
+			a.ins(x);
+		else if (op == 'A')
+			a.add(x);
+		else if (op == 'S')
+			a.add(-x);
+		else
+			if (x > a.size() - a.get_lv())
+				cout << "-1\n";
+			else
+				cout << a.find(x) << '\n';
+	}
+	cout << a.get_lv();
 	return 0;
 }
