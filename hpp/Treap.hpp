@@ -189,6 +189,7 @@ class fhq_Treap{
 		}
 	public:
 		fhq_Treap(){
+			root = 0;
 			srand(time(0));
 		}
 		int size(){
