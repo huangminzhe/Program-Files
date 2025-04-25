@@ -158,9 +158,8 @@ class fhq_Treap{
 				return ;
 			}
 			pd(p);
-			if (nodes[nodes[p].l].size < x){
+			if (nodes[p].x <= x){
 				l = p;
-				x -= nodes[nodes[p].l].size + 1;
 				split(nodes[p].r,x,nodes[p].r,r);
 			}else{
 				r = p;
@@ -191,6 +190,9 @@ class fhq_Treap{
 	public:
 		fhq_Treap(){
 			srand(time(0));
+		}
+		int size(){
+			return nodes[root].size;
 		}
 		void ins(int x){
 			int l,r;
