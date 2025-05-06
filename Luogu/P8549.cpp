@@ -27,6 +27,7 @@ void zig(int u,int v){
 }
 void dfs(int u,int v,int cnt){
 	if (cnt >= mn)	return ;
+	if 
 }
 int main(int argc, char **argv){
 	cin >> n;
@@ -35,24 +36,21 @@ int main(int argc, char **argv){
 			char c;
 			// printf("%d %d\n",i,j);
 			cin >> c;
-			if (c <= '9'){
+			if (c <= '9')
 				a[i][j] = c - '0';
-				if (z[(i - 1) / n + 1][(j - 1) / n + 1][a[i][j]]){
-					cout << -1;
-					return 0;
-				}
-				z[(i - 1) / n + 1][(j - 1) / n + 1][a[i][j]] = 1;
-			}else{
+			else
 				a[i][j] = c - 'A' + 10;
-				if (z[(i - 1) / n + 1][(j - 1) / n + 1][a[i][j]]){
-					cout << -1;
-					return 0;
-				}
-				z[(i - 1) / n + 1][(j - 1) / n + 1][a[i][j]] = 1;
+			if (z[(i - 1) / n + 1][(j - 1) / n + 1][a[i][j]]){
+				cout << -1;
+				return 0;
 			}
+			z[(i - 1) / n + 1][(j - 1) / n + 1][a[i][j]] = 1;
 		}
 	}
 	dfs(1,1,0);
+	if (mn == INF)	mn = -1;
 	cout << mn;
+	for (int i = 1;i <= mn;i++){
+	}
 	return 0;
 }
