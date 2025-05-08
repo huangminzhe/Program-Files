@@ -18,20 +18,15 @@ void zig(int x,int y){
 			a[up + i - 1][lft + j - 1] = tmp[i][j];
 		}
 	}
-	printf("%d %d\n",x,y);
-	for (int i = 1;i <= n;i++){
-		for (int j = 1;j <= n;j++){
-			printf("%d ",tmp[i][j]);
-		}
-		cout << '\n';
-	}
 }
 bool check(int u,int v){
 	int up = u * n - n + 1,dwn = u * n,
 		lft = v * n - n + 1,rt = v * n;
 	bool x[20][20] = {{0}},y[20][20] = {{0}};
+    // printf("  %d %d\n",u,v);
 	for (int i = 1;i <= dwn;i++){
 		for (int j = 1;j <= rt;j++){
+            // printf("x:%d %d %d\ny:%d %d %d\n",i,a[i][j],x[i][a[i][j]],j,a[i][j],y[j][a[i][j]]);
 			if (x[i][a[i][j]] || y[j][a[i][j]])
 				return 0;
 			x[i][a[i][j]] = y[j][a[i][j]] = 1;
@@ -41,6 +36,9 @@ bool check(int u,int v){
 }
 void dfs(int x,int y,int cnt){
 	if (cnt >= mn)	return ;
+    // printf(" %d %d %d\n",x,y,cnt);
+    // for (int i = 1;i <= cnt;i++)
+    //     printf("%d %d\n",p[i].first,p[i].second);
 	if (x > n){
 		mn = cnt;
 		for (int i = 1;i <= cnt;i++)
@@ -48,7 +46,8 @@ void dfs(int x,int y,int cnt){
 		return ;
 	}
 	for (int i = 0;i < 4;i++){
-		p[cnt + i] = {x,y};
+        if (i)
+    		p[cnt + i] = {x,y};
 		if (check(x,y))
 			dfs((y == n?x + 1:x),((y == n?1:y + 1)),cnt + i);
 		zig(x,y);
