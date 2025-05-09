@@ -11,7 +11,7 @@ ostream& operator<<(ostream& out,lll b){
 		out << '0';
 		return out;
 	}
-	if (b > 10)
+	if (b >= 10)
 		out << b / 10;
 	out << "0123456789"[b % 10];
 	return out;
@@ -49,9 +49,9 @@ int main(int argc, char **argv){
 	for (int k = 2;k < n;k++){
 		for (int i = 1;i <= n - k;i++){
 			int j = i + k;
-			dp[i][j] = dp[i][i + 1] + dp[i + 1][j] + a[i] * a[i + 1] * a[j];
+			dp[i][j] = dp[i][i + 1] + dp[i + 1][j] + (lll)1 * a[i] * a[i + 1] * a[j];
 			for (int h = i + 2;h < j;h++)
-				dp[i][j] = min(dp[i][j],dp[i][h] + dp[h][j] + a[i] * a[h] * a[j]);
+				dp[i][j] = min(dp[i][j],dp[i][h] + dp[h][j] + (lll)1 * a[i] * a[h] * a[j]);
 		}
 	}
 	cout << dp[1][n];
