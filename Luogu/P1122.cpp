@@ -9,7 +9,7 @@ void dfs(int u,int fa){
 	for (int v : g[u]){
 		if (v == fa)	continue;
 		dfs(v,u);
-		if (dp[v] > 0)	dp[u] += dp[v];
+		dp[u] += max(dp[v],0);
 	}
 }
 int main(int argc, char **argv){
