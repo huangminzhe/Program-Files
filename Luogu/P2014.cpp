@@ -2,14 +2,15 @@
 using namespace std;
 typedef long long ll;
 const int N = 305;
-int n,m;
-int pre[N],a[N],dp[N][N];
+int n,m,tot;
+int pre[N],a[N],dp[N][N],sz[N],dfsx[N];
 vector<int> g[N];
-int dfs(int u,int lss){
-	if (!lss || !g[u].size())	return 0;
+void init(int u){
+	sz[u] = 1,dfsx[tot++] = u;
 	for (int v : g[u]){
+		init(v);
+		sz[u] += sz[v];
 	}
-	return dp[u][lss];
 }
 int main(int argc, char **argv){
 	cin >> n >> m;
@@ -17,6 +18,12 @@ int main(int argc, char **argv){
 		cin >> pre[i] >> a[i];
 		g[pre[i]].push_back(i);
 	}
-	cout << dfs(0,m);
+	init(0);
+	for (int i = n;i >= 0;i--){
+		for (int j = 1;j <= m + 1;j++){
+			dp[i][j] = max(dp[i + sz[dfsx[i]]][j],dp[i + 1][j - 1] + a[dfsx[i]]);
+		}
+	}
+	cout << dp[1][m];	// 虚点（0）不算
 	return 0;
 }
