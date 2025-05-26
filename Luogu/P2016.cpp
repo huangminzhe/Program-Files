@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int N = 1.5e3 + 5;
-int n,dp[N][N],s;
+int n,dp[N][2],s;
 vector<int> a[N];
 bool fa[N];
 void dfs(int u){
