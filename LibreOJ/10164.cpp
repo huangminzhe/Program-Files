@@ -33,7 +33,7 @@ ll solve(int x){
 		o = n;
 		if (i == 1)	ans++;	// 算上边界
 	}
-	
+	return ans;
 }
 int main(int argc, char **argv){
 	ios::sync_with_stdio(0);
