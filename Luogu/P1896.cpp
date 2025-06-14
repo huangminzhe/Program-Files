@@ -29,8 +29,8 @@ int main(int argc, char **argv){
 			for (int j2 = 0;j2 < 1 << n;j2++){	// 枚举上一行状态
 				if (!f[j2])	continue;
 				if (!((j2 >> 1 | j2 | j2 << 1) & j1))
-					for (int h = i;h >= cnt[i];h--)
-						dp[i][j1][h] += dp[i - 1][j2][h - cnt[i]];
+					for (int h = k;h >= cnt[j1];h--)
+						dp[i][j1][h] += dp[i - 1][j2][h - cnt[j1]];
 			}
 		}
 	}
