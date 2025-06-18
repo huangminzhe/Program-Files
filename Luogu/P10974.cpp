@@ -27,7 +27,8 @@ void dfs(int u,int fa){
 	for (int i = head[u];i;i = edges[i].nxt){
 		int v = edges[i].v,w = edges[i].w;
 		if (v == fa)	continue;
-		dp[v] = dp[v] + min(ll(w),dp[u] - min(ll(w),dp[v]));
+		if (i == head[u] && edges[i].nxt == 0)	dp[v] += w;	// 根节点只有一个儿子时
+		else	dp[v] = dp[v] + min(ll(w),dp[u] - min(ll(w),dp[v]));
 		dfs(v,u);
 	}
 }
