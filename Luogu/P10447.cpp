@@ -7,7 +7,7 @@ int lowbit(int x){
 	return x & -x;
 }
 int lowwei(int x){
-	return __builtin_ffs(x) - 1;
+	return __builtin_ffs(x);
 }
 int main(int argc, char **argv){
 	int n;
@@ -17,12 +17,15 @@ int main(int argc, char **argv){
 			cin >> d[i][j];
 		}
 	}
+	memset(dp,0x3f,sizeof dp);
+	dp[1][1] = 0;
 	for (int k = 1;k < 1 << n;k++){	// 枚状态
 		if (!(k & 1))	continue;
 		for (int i = k,si = lowwei(k);i;i -= lowbit(i),si = lowwei(i)){	// 枚当前点
-			for (int j = 1;j <= n;j <<= 1){	// 枚下一个点
+			for (int sj = 1;sj <= n;sj++){	// 枚下一个点
+				int j = 1 << sj - 1;
 				if ((k | j) == k)	continue;
-				dp[k | j][lowwei(j)] = min(dp[k | j][lowwei(j)],dp[k][si] + d[si][lowwei(j)]);
+				dp[k | j][sj] = min(dp[k | j][sj],dp[k][si] + d[si][sj]);
 			}
 		}
 	}
