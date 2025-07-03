@@ -2,9 +2,9 @@
 using namespace std;
 typedef long long ll;
 const int N = 1e5 + 5,M = 1e6 + 5;
-int n,m,tot,dfn[N],low[N],cnt,f[N],a[N],mod,mx[N],mxn[N],ans,dp[N];
+int n,m,tot,dfn[N],low[N],cnt,f[N],a[N],mod,mx[N],mxn[N],ans;
 // mx[i] 是以 i 为起点的最长链的长度，dp[i] 则是个数
-ll anst;
+ll anst,dp[N];
 bool is[N],f2[N];
 vector<int> g[N],root,g2[N];
 set<ll> edges;
@@ -48,6 +48,7 @@ int dps(int u){
 			dp[u] = dp[v];
 		}else if (a[u] + dps(v) == mx[u]){
 			dp[u] += dp[v];
+			dp[u] %= mod;
 		}
 	}
 	return mx[u];
@@ -74,6 +75,7 @@ int main(int argc, char **argv){
 				ans = dps(i);
 				anst = dp[i];
 			}else if (dps(i) == ans)	anst += dp[i];
+			anst %= mod;
 		}
 	}
 	cout << ans << '\n' << anst % mod;
