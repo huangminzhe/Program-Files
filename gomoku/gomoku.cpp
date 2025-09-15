@@ -2,10 +2,18 @@
 using namespace std;
 
 typedef signed char int8;
-const int8 BOARD_SIZE = 15;
+typedef short int16;
 class Gomoku{
 	private:
+		static const int8 BOARD_SIZE = 15;
 		int8 board[BOARD_SIZE][BOARD_SIZE];
+		static const int16 LIVE5 = 100000;	// 活5
+		static const int16 LIVE4 = 10000;	// 活4
+		static const int16 ONE4  = 1000;	// 4
+		static const int16 LIVE3 = 1000;	// 活3
+		static const int16 ONE3  = 100;		// 3
+		static const int16 LIVE2 = 100;		// 活2
+		static const int16 ONE2  = 10;		// 2
 	public:
 		Gomoku(){
 			for (int8 i = 1;i <= BOARD_SIZE;i++){
@@ -59,6 +67,9 @@ class Gomoku{
 			}
 			return 0;
 		}
+
+		int eva(int){}
+		int astar(int d,bool isAI){}
 };
 
 int main(int argc, char **argv){
