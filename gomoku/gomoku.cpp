@@ -6,14 +6,15 @@ typedef short int16;
 class Gomoku{
 	private:
 		static const int8 BOARD_SIZE = 15;
+		static const int INF = INT_MAX;
 		int8 board[BOARD_SIZE][BOARD_SIZE];
-		static const int16 LIVE5 = 100000;	// 活5
-		static const int16 LIVE4 = 10000;	// 活4
-		static const int16 ONE4  = 1000;	// 4
-		static const int16 LIVE3 = 1000;	// 活3
-		static const int16 ONE3  = 100;		// 3
-		static const int16 LIVE2 = 100;		// 活2
-		static const int16 ONE2  = 10;		// 2
+		static const int LIVE5 = 100000;	// 活5
+		static const int LIVE4 = 10000;		// 活4
+		static const int ONE4  = 1000;		// 4
+		static const int LIVE3 = 1000;		// 活3
+		static const int ONE3  = 100;		// 3
+		static const int LIVE2 = 100;		// 活2
+		static const int ONE2  = 10;		// 2
 	public:
 		Gomoku(){
 			for (int8 i = 1;i <= BOARD_SIZE;i++){
@@ -68,8 +69,32 @@ class Gomoku{
 			return 0;
 		}
 
-		int eva(int){}
-		int astar(int d,bool isAI){}
+		int evaall(){}
+		/**
+		 * @param d 深度
+		 * @param isAI 是否到AI落子
+		 * @param alpha AI最少能获得的分数
+		 * @param beta 玩家最多能获得的分数
+		 */
+		int astar(int d,bool isAI,int alpha,int beta){
+			if (d == 0 || check()){
+				return evaall();
+			}
+			if (isAI){
+				int mx = -INF;
+				for (int i = 1;i <= BOARD_SIZE;i++){
+					for (int j = 1;j <= BOARD_SIZE;j++){
+						if (board[i][j])	continue;
+						board[i][j] = 1 + isAI;
+						mx = max(mx,astar(d - 1,0,alpha,beta));
+						board[i][j] = 0;
+
+						alpha = max(alpha,mx);
+
+					}
+				}
+			}
+		}
 };
 
 int main(int argc, char **argv){
