@@ -1,3 +1,7 @@
+/*
+CDE7.1版本 
+
+*/
 #ifndef CDEx_H
 #define CDEx_H
 #include<bits/stdc++.h>
@@ -39,6 +43,7 @@ struct xy
 		return '\0';
 	}
 };
+const xy EDGE={30,120};
 struct picture
 {
 	int l,h;
@@ -91,6 +96,56 @@ namespace Tool
 		ScreenToClient(GetForegroundWindow(),&p);
 		return {p.y/ft_size.dwFontSize.Y,p.x/ft_size.dwFontSize.X};
 	}
+	string getRGB(int r,int g,int b)
+	{
+		return "[38;2;"+to_string(r)+";"+to_string(g)+";"+to_string(b)+"m";
+	}
+	string getbRGB(int r,int g,int b)
+	{
+		return "[48;2;"+to_string(r)+";"+to_string(g)+";"+to_string(b)+"m";
+	}
+	string get033RGB(string x)
+	{
+		return "["+x+"m";
+	}
+	string getNONERGB()
+	{
+		return "\033[0m";
+	}
+	string getstrRGB(string s)
+	{
+		if(s.size()<9)return s;
+		if(s[0]=='R' && s[1]=='G' && s[2]=='B' && s[3]=='_')
+		{
+			int i=3;string r="",g="",b="";
+			for(i++;i<s.size();i++)
+				if(s[i]=='_')break;else r+=s[i];
+			for(i++;i<s.size();i++)
+				if(s[i]=='_')break;else g+=s[i];
+			for(i++;i<s.size();i++)
+				b+=s[i];
+			return getRGB(stoi(r),stoi(g),stoi(b));
+		}
+		if(s[0]=='b' && s[1]=='R' && s[2]=='G' && s[3]=='B' && s[4]=='_')
+		{
+			int i=4;string r="",g="",b="";
+			for(i++;i<s.size();i++)
+				if(s[i]=='_')break;else r+=s[i];
+			for(i++;i<s.size();i++)
+				if(s[i]=='_')break;else g+=s[i];
+			for(i++;i<s.size();i++)
+				b+=s[i];
+			return getbRGB(stoi(r),stoi(g),stoi(b));
+		}
+		if(s[0]=='\\' && s[1]=='0' && s[2]=='3' && s[3]=='3' && s[4]=='_')
+		{
+			int i=4;string x="";
+			for(i++;i<s.size();i++)
+				x+=s[i];
+			return get033RGB(x);
+		}
+		return s;
+	}
 }
 class Item
 {
@@ -119,6 +174,7 @@ class Item
 				SetConsoleMode(hStdin,mode);
 				init_flag=1;
 			}
+			system("color 07");
 		}
 		string turn(string str)
 		{
@@ -155,6 +211,7 @@ class Item
 		xy pxy;
 		int len,hei,hidemode,fac;
 		vector<string>g;
+		string color="";
 		string ng;
 		//克隆组 
 		vector<Item>clone;
@@ -180,6 +237,7 @@ class Item
 			if(hidemode)p.hide();
 			else p.show();
 			p.fac=fac;
+			p.color=color;
 			p.T_int=T_int;
 			p.T_double=T_double;
 			p.T_string=T_string;
@@ -230,6 +288,15 @@ class Item
 			killmode=0;
 			fac=0;
 			init();
+		}
+		Item(xy p,vector<string>str,int hide=0)
+		{
+			pxy={0,0};
+			hidemode=0;
+			killmode=0;
+			fac=0;
+			init();
+			code_load(str);
 		}
 		Item()
 		{
@@ -382,6 +449,27 @@ class Item
 			if(s!="")
 				group_load(s);
 		}
+		void code_load(vector<string>str,string s="")
+		{
+			int l=str.size(),mal=0;
+			string k="";
+			for(auto i:str)
+				if(i.size()>mal)
+					mal=i.size();
+			for(auto i:str)
+			{
+				string temp=i;
+				while(temp.size()<mal)
+					temp+=" ";
+				k+=temp;
+			}
+			code_load(l,k,s);
+		}
+		void color_load(string cl)
+		{
+			color=cl;
+			draw();
+		}
 		//绘制组 
 		void draw()
 		{
@@ -390,7 +478,9 @@ class Item
 				for(int i=0;i<(int)g.size();i++)
 				{
 					gotoxy({pxy.x+i,pxy.y});
+					cout<<color;
 					cout<<g[i];
+					cout<<Tool::getNONERGB();
 				}
 			}
 		}
@@ -404,6 +494,19 @@ class Item
 					cout<<strs(" ",(int)g[i].size());
 				}
 			}
+		}
+		void clear_screen_cls()
+		{
+			system("cls");
+		}
+		void clear_screen_space()
+		{
+			for(int i=0;i<=EDGE.x;i++)
+				for(int j=0;j<=EDGE.y;j++)
+				{
+					gotoxy({i,j});
+					cout<<" ";
+				}
 		}
 		//动作组 
 		bool goto_xy(xy p,xy py={0,0})
@@ -671,9 +774,9 @@ class Item
 		}
 		bool crash_edge(xy np={-1,-1})
 		{
-			xy newp,p={31,121};
+			xy newp,p=EDGE;
 			newp=(np==(xy){-1,-1}?pxy:np);
-			if(newp.x>=0 && newp.y>=0 && newp.x+len<p.x && newp.y+hei<p.y)
+			if(newp.x>=0 && newp.y>=0 && newp.x+len<=p.x && newp.y+hei<=p.y)
 				return 0;
 			return 1;
 		}
