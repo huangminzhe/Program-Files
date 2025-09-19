@@ -111,5 +111,11 @@
 		"flat_map": "cpp",
 		"flat_set": "cpp"
 	},
-	"editor.fontFamily": "'Maple Mono NF CN', monospace"
+	"editor.fontFamily": "'Maple Mono NF CN', monospace",
+	"github.copilot.enable": {
+		"*": false,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false
+	}
 }
