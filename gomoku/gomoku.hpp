@@ -2,7 +2,6 @@
 #define GOMOKU_HPP
 
 #include <bits/stdc++.h>
-using namespace std;
 typedef signed char int8;
 typedef short int16;
 
@@ -27,15 +26,19 @@ class Gomoku{
 		 *  @return 是否超出边界
 		 */
 		bool check_edge(int x,int y){
-			if (x < 1 || x > BOARD_SIZE || 
-				y < 1 || y > BOARD_SIZE)	return 1;
-			return 0;
+			return x < 1 || x > BOARD_SIZE || y < 1 || y > BOARD_SIZE;
+		}
+		/**
+		 *  @return (x,y) 的棋子是否和 (xi,yi) 的棋子颜色相同
+		 */
+		bool check_piece(int x,int y,int xi,int yi){
+			return board[xi][yi] && board[xi][yi] == board[x][y];
 		}
 
 		int evadir(int8 x,int8 y,int8 dir,int8 d,bool live){
 			if (d == 5)	return LIVE5;
 			int8 xi = x + dx[dir],yi = y + dy[dir];
-			if (check_edge(xi,yi) || board[xi][yi] && board[xi][yi] != board[x][y]){	// 堵住了
+			if (check_edge(xi,yi) || !check_piece(x,y,xi,yi)){	// 堵住了
 				if (live){
 					if (d == 1)	return ONE1;
 					if (d == 2)	return ONE2;
