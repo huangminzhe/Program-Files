@@ -43,7 +43,7 @@ struct xy
 		return '\0';
 	}
 };
-const xy EDGE={30,120};
+xy EDGE={30,120};
 struct picture
 {
 	int l,h;
@@ -68,6 +68,26 @@ xy tdef(xy p)
 }
 namespace Tool
 {
+	void init_screen()
+	{
+		if(!init_flag)
+		{
+			CONSOLE_CURSOR_INFO cciCursor;
+			HANDLE hStdOut=GetStdHandle(STD_OUTPUT_HANDLE);
+			if(GetConsoleCursorInfo(hStdOut,&cciCursor))
+			{
+				cciCursor.bVisible=FALSE;
+				SetConsoleCursorInfo(hStdOut,&cciCursor);
+			}
+			HANDLE hStdin=GetStdHandle(STD_INPUT_HANDLE);
+			DWORD mode;
+			GetConsoleMode(hStdin,&mode);
+			mode&=~ENABLE_QUICK_EDIT_MODE;
+			SetConsoleMode(hStdin,mode);
+			system("color 07");
+			init_flag=1;
+		}
+	}
 	void sleep(int ms)
 	{
 		Sleep(ms);
@@ -85,6 +105,7 @@ namespace Tool
 	}
 	xy mousexy()//获取鼠标字符位置 
 	{
+		init_screen();
 		HANDLE hOutput=GetStdHandle(STD_OUTPUT_HANDLE);
 		if(hOutput==INVALID_HANDLE_VALUE)
 			return {0,0};
@@ -146,35 +167,61 @@ namespace Tool
 		}
 		return s;
 	}
+	void clear_screen_cls()
+	{
+		init_screen();
+		system("cls");
+	}
+	void set_screen_size(short hei,short len)
+	{
+		init_screen();
+		string s="mode con cols="+to_string(len)+" lines="+to_string(hei);
+		system(s.c_str());
+		EDGE={hei,len};
+	}
+	void set_screen_title(string title)
+	{
+		init_screen();
+		string temp="title "+title;
+		system(temp.c_str());
+	}
+	void lock_screen_size()
+	{
+		init_screen();
+		SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
+	}
+	void gotoxy(xy po)//移动字符位置 
+	{
+//		init_screen();
+		COORD pos={(short)po.y,(short)po.x};
+		HANDLE hOut=GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleCursorPosition(hOut,pos);
+	}
+	void clear_screen_space()
+	{
+		for(int i=0;i<=EDGE.x;i++)
+			for(int j=0;j<=EDGE.y;j++)
+			{
+				gotoxy({i,j});
+				cout<<" ";
+			}
+	}
+	void quit_screen()
+	{
+		system("pause>nul");
+		exit(0);
+	}
 }
 class Item
 {
 	private:
 		void gotoxy(xy po)//移动字符位置 
 		{
-			COORD pos={(short)po.y,(short)po.x};
-			HANDLE hOut=GetStdHandle(STD_OUTPUT_HANDLE);
-			SetConsoleCursorPosition(hOut,pos);
+			Tool::gotoxy(po);
 		}
 		void init()
 		{
-			if(!init_flag)
-			{
-				CONSOLE_CURSOR_INFO cciCursor;
-				HANDLE hStdOut=GetStdHandle(STD_OUTPUT_HANDLE);
-				if(GetConsoleCursorInfo(hStdOut,&cciCursor))
-				{
-					cciCursor.bVisible=FALSE;
-					SetConsoleCursorInfo(hStdOut,&cciCursor);
-				}
-				HANDLE hStdin=GetStdHandle(STD_INPUT_HANDLE);
-				DWORD mode;
-				GetConsoleMode(hStdin,&mode);
-				mode&=~ENABLE_QUICK_EDIT_MODE;
-				SetConsoleMode(hStdin,mode);
-				init_flag=1;
-			}
-			system("color 07");
+			Tool::init_screen();
 		}
 		string turn(string str)
 		{
@@ -219,6 +266,7 @@ class Item
 		bool killmode;
 		//图片组 
 		map<string,picture>group;
+		map<string,string>group_c;
 		//动画组 
 		map<string,vector<string> >anime;
 		map<string,int>anime_frame;
@@ -232,12 +280,13 @@ class Item
 		Item jc_item()
 		{
 			Item p(pxy,1);
-			p.group_set(group);
 			p.code_load(len,hei,ng);
 			if(hidemode)p.hide();
 			else p.show();
 			p.fac=fac;
 			p.color=color;
+			p.group=group;
+			p.group_c=group_c;
 			p.T_int=T_int;
 			p.T_double=T_double;
 			p.T_string=T_string;
@@ -291,8 +340,8 @@ class Item
 		}
 		Item(xy p,vector<string>str,int hide=0)
 		{
-			pxy={0,0};
-			hidemode=0;
+			pxy=p;
+			hidemode=hide;
 			killmode=0;
 			fac=0;
 			init();
@@ -305,6 +354,7 @@ class Item
 			killmode=0;
 			fac=0;
 			init();
+			code_load({""});
 		}
 		//获取组 
 		xy get_xy()
@@ -465,10 +515,11 @@ class Item
 			}
 			code_load(l,k,s);
 		}
-		void color_load(string cl)
+		void code_load(vector<string>str,string group,string group_color)
 		{
-			color=cl;
-			draw();
+			code_load(str,group);
+			group_load(group,group_color);
+			group_use(group);
 		}
 		//绘制组 
 		void draw()
@@ -495,18 +546,10 @@ class Item
 				}
 			}
 		}
-		void clear_screen_cls()
+		void color_load(string cl)
 		{
-			system("cls");
-		}
-		void clear_screen_space()
-		{
-			for(int i=0;i<=EDGE.x;i++)
-				for(int j=0;j<=EDGE.y;j++)
-				{
-					gotoxy({i,j});
-					cout<<" ";
-				}
+			color=cl;
+			draw();
 		}
 		//动作组 
 		bool goto_xy(xy p,xy py={0,0})
@@ -532,9 +575,9 @@ class Item
 			draw();
 			return 1;
 		}
-		bool move_xy(xy p)
+		bool move_xy(xy p,xy py={0,0})
 		{
-			return move_xy(p.x,p.y);
+			return move_xy(p.x+py.x,p.y+py.y);
 		}
 		void towards(int new_fac)
 		{
@@ -648,13 +691,15 @@ class Item
 			return sum;
 		}
 		//图片组 
-		void group_load(string name)
+		void group_load(string name,string group_color="")
 		{
 			group[name]=(picture){len,hei,g};
+			group_c[name]=group_color;
 		}
 		void group_item(string name,Item p)
 		{
 			group[name]=(picture){p.get_len(),p.get_hei(),p.get_g()};
+			group_c[name]=color;
 		}
 		void group_use(string name)
 		{
@@ -662,17 +707,23 @@ class Item
 			picture p=group[name];
 			len=p.l,hei=p.h;
 			g=p.g;
+			color_load(group_c[name]);
 			draw();
 		}
 		void group_erase(string name)
 		{
 			group.erase(name);
+			group_c.erase(name);
 		}
 		void group_set(map<string,picture>p)
 		{
 			group=p;
 		}
-		//动画组
+		void group_color_set(map<string,string>group_color)
+		{
+			group_c=group_color;
+		}
+		//动画组 
 		void frame_add(string name,string pname)
 		{
 			anime[name].push_back(pname);
