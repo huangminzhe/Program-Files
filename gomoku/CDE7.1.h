@@ -103,7 +103,7 @@ namespace Tool
 			flag=flag && KEYDOWN(VK_RBUTTON);
 		return flag;
 	}
-	xy mousexy()//获取鼠标字符位置 
+	xy get_mouse_xy()//获取鼠标字符位置 
 	{
 		init_screen();
 		HANDLE hOutput=GetStdHandle(STD_OUTPUT_HANDLE);
@@ -114,27 +114,40 @@ namespace Tool
 			return {0,0};
 		POINT p;
 		GetCursorPos(&p);
-		ScreenToClient(GetForegroundWindow(),&p);
+		ScreenToClient(now_window,&p);
 		return {p.y/ft_size.dwFontSize.Y,p.x/ft_size.dwFontSize.X};
 	}
 	string getRGB(int r,int g,int b)
 	{
+		#if _WIN64
 		return "[38;2;"+to_string(r)+";"+to_string(g)+";"+to_string(b)+"m";
+		#endif
+		return "";
 	}
 	string getbRGB(int r,int g,int b)
 	{
+		#if _WIN64
 		return "[48;2;"+to_string(r)+";"+to_string(g)+";"+to_string(b)+"m";
+		#endif
+		return "";
 	}
 	string get033RGB(string x)
 	{
+		#if _WIN64
 		return "["+x+"m";
+		#endif
+		return "";
 	}
 	string getNONERGB()
 	{
+		#if _WIN64
 		return "\033[0m";
+		#endif
+		return "";
 	}
 	string getstrRGB(string s)
 	{
+		#if _WIN64
 		if(s.size()<9)return s;
 		if(s[0]=='R' && s[1]=='G' && s[2]=='B' && s[3]=='_')
 		{
@@ -166,18 +179,27 @@ namespace Tool
 			return get033RGB(x);
 		}
 		return s;
+		#endif
+		return "";
 	}
 	void clear_screen_cls()
 	{
 		init_screen();
 		system("cls");
 	}
-	void set_screen_size(short hei,short len)
+	void lock_screen_size()
 	{
 		init_screen();
-		string s="mode con cols="+to_string(len)+" lines="+to_string(hei);
+		SetWindowLongPtrA(now_window,GWL_STYLE,GetWindowLongPtrA(now_window,GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
+	}
+	void set_screen_size(xy size,bool need_lock=0)
+	{
+		init_screen();
+		string s="mode con cols="+to_string(size.y)+" lines="+to_string(size.x);
 		system(s.c_str());
-		EDGE={hei,len};
+		EDGE=size;
+		if(need_lock)
+			lock_screen_size();
 	}
 	void set_screen_title(string title)
 	{
@@ -185,14 +207,9 @@ namespace Tool
 		string temp="title "+title;
 		system(temp.c_str());
 	}
-	void lock_screen_size()
+	void goto_char_xy(xy po)//移动字符位置 
 	{
 		init_screen();
-		SetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE,GetWindowLongPtrA(GetConsoleWindow(),GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
-	}
-	void gotoxy(xy po)//移动字符位置 
-	{
-//		init_screen();
 		COORD pos={(short)po.y,(short)po.x};
 		HANDLE hOut=GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleCursorPosition(hOut,pos);
@@ -202,7 +219,7 @@ namespace Tool
 		for(int i=0;i<=EDGE.x;i++)
 			for(int j=0;j<=EDGE.y;j++)
 			{
-				gotoxy({i,j});
+				goto_char_xy({i,j});
 				cout<<" ";
 			}
 	}
@@ -215,14 +232,6 @@ namespace Tool
 class Item
 {
 	private:
-		void gotoxy(xy po)//移动字符位置 
-		{
-			Tool::gotoxy(po);
-		}
-		void init()
-		{
-			Tool::init_screen();
-		}
 		string turn(string str)
 		{
 			string s=str;
@@ -277,7 +286,7 @@ class Item
 				else break;
 			return vis.size();
 		}
-		Item jc_item()
+		Item jc_item(bool have_clone=0)
 		{
 			Item p(pxy,1);
 			p.code_load(len,hei,ng);
@@ -285,8 +294,16 @@ class Item
 			else p.show();
 			p.fac=fac;
 			p.color=color;
+			p.killmode=killmode;
+			if(have_clone)
+			{
+				p.clone=clone;
+				p.vis=vis;
+			}
 			p.group=group;
 			p.group_c=group_c;
+			p.anime=anime;
+			p.anime_frame=anime_frame;
 			p.T_int=T_int;
 			p.T_double=T_double;
 			p.T_string=T_string;
@@ -329,31 +346,32 @@ class Item
 		map<string,int>Tmap_int;
 		map<string,double>Tmap_double;
 		map<string,string>Tmap_string;
+		
 		//初始化组 
 		Item(xy p,int hide=0)
 		{
+			Tool::init_screen();
 			pxy=p;
 			hidemode=hide;
 			killmode=0;
 			fac=0;
-			init();
 		}
 		Item(xy p,vector<string>str,int hide=0)
 		{
+			Tool::init_screen();
 			pxy=p;
 			hidemode=hide;
 			killmode=0;
 			fac=0;
-			init();
 			code_load(str);
 		}
 		Item()
 		{
+			Tool::init_screen();
 			pxy={0,0};
 			hidemode=0;
 			killmode=0;
 			fac=0;
-			init();
 			code_load({""});
 		}
 		//获取组 
@@ -385,13 +403,13 @@ class Item
 		{
 			return g[line-1];
 		}
-		xy get_mousexy()
-		{
-			return Tool::mousexy();
-		}
 		bool get_killmode()
 		{
 			return killmode;
+		}
+		string get_color()
+		{
+			return color;
 		}
 		map<string,picture> get_group()
 		{
@@ -425,25 +443,30 @@ class Item
 			if(F==2) return 270+atan_(1.0*xs/ys);
 			return 0;
 		}
-		xy get_len_xy(double len,double block_mode=2)
+		pair<double,double> get_len_xy_double(double len,double block_mode=2)
 		{
 			bool flag=0;
 			if(len<0)
 				flag=1,len=-len,left(180);
 			block_mode=abs(block_mode);
-			int nx=pxy.x,ny=pxy.y;
+			double nx=pxy.x,ny=pxy.y;
 			int nf=fac%90;
 			if(fac>=0 && fac<90)
-				nx-=round(cos_(nf)*len),ny+=round(block_mode*sin_(nf)*len);
+				nx-=cos_(nf)*len,ny+=block_mode*sin_(nf)*len;
 			if(fac>=90 && fac<180)
-				nx+=round(sin_(nf)*len),ny+=round(block_mode*cos_(nf)*len);
+				nx+=sin_(nf)*len,ny+=block_mode*cos_(nf)*len;
 			if(fac>=180 && fac<270)
-				nx+=round(cos_(nf)*len),ny-=round(block_mode*sin_(nf)*len);
+				nx+=cos_(nf)*len,ny-=block_mode*sin_(nf)*len;
 			if(fac>=270 && fac<360)
-				nx-=round(sin_(nf)*len),ny-=round(block_mode*cos_(nf)*len);
+				nx-=sin_(nf)*len,ny-=block_mode*cos_(nf)*len;
 			if(flag)
 				left(180);
-			return xy{nx,ny};
+			return pair<double,double>{nx,ny};
+		}
+		xy get_len_xy(double len,double block_mode=2)
+		{
+			pair<double,double>p=get_len_xy_double(len,block_mode);
+			return xy{(int)p.first,(int)p.second};
 		}
 		double get_to_facing(Item p,bool facing_center=1)
 		{
@@ -524,11 +547,11 @@ class Item
 		//绘制组 
 		void draw()
 		{
-			if(!hidemode && !crash_edge())
+			if(!hidemode && !killmode && !crash_edge())
 			{
 				for(int i=0;i<(int)g.size();i++)
 				{
-					gotoxy({pxy.x+i,pxy.y});
+					Tool::goto_char_xy({pxy.x+i,pxy.y});
 					cout<<color;
 					cout<<g[i];
 					cout<<Tool::getNONERGB();
@@ -541,10 +564,17 @@ class Item
 			{
 				for(int i=0;i<(int)g.size();i++)
 				{
-					gotoxy({pxy.x+i,pxy.y});
+					Tool::goto_char_xy({pxy.x+i,pxy.y});
 					cout<<strs(" ",(int)g[i].size());
 				}
 			}
+		}
+		void print(xy p)
+		{
+			xy fp=pxy;
+			pxy=p;
+			draw();
+			pxy=fp;
 		}
 		void color_load(string cl)
 		{
@@ -605,14 +635,14 @@ class Item
 		{
 			return goto_xy(get_len_xy(lens,block_mode));
 		}
-		bool forward_run(double lens,void *fun(xy),double block_mode=2)
+		bool forward_run(double lens,bool (*fun)(Item),double block_mode=2)
 		{
 			xy p=pxy;
-			bool flag=1;
-			for(int i=0;i<=abs(lens);i++)
+			for(int i=0;i<=abs(floor(lens));i++)
 			{
-				forward((lens<0?-i:i),block_mode),fun(pxy),flag=goto_xy(p);
-				if(!flag)return 0;
+				if(!forward((lens<0?-i:i),block_mode))return 0;
+				if(!fun(jc_item(1)))return 0;
+				goto_xy(p);
 			}
 			return 1;
 		}
@@ -620,7 +650,7 @@ class Item
 		{
 			return forward(-lens,block_mode);
 		}
-		bool backward_run(double lens,void *fun(xy),double block_mode=2)
+		bool backward_run(double lens,bool (*fun)(Item),double block_mode=2)
 		{
 			return forward_run(-lens,fun,block_mode);
 		}
@@ -637,6 +667,7 @@ class Item
 		void kill()
 		{
 			killmode=1;
+			hidemode=1;
 			clear();
 		}
 		//克隆组 
@@ -699,7 +730,7 @@ class Item
 		void group_item(string name,Item p)
 		{
 			group[name]=(picture){p.get_len(),p.get_hei(),p.get_g()};
-			group_c[name]=color;
+			group_c[name]=p.get_color();
 		}
 		void group_use(string name)
 		{
@@ -734,6 +765,11 @@ class Item
 			anime[name].clear();
 			anime_frame[name]=0;
 		}
+		void frame_erase(string name)
+		{
+			anime.erase(name);
+			anime_frame.erase(name);
+		}
 		void frame_use(string name,int start)
 		{
 			start=(start-1)%anime[name].size();
@@ -765,7 +801,7 @@ class Item
 		//碰撞组 
 		bool crash_mouse(bool must_show=1)//鼠标是否碰到图片矩形部分 
 		{
-			xy mp=Tool::mousexy();
+			xy mp=Tool::get_mouse_xy();
 			if(!hidemode || !must_show)
 				if(mp.x>=pxy.x && mp.y>=pxy.y && mp.x<pxy.x+len && mp.y<pxy.y+hei)
 					return 1;
@@ -774,7 +810,7 @@ class Item
 		bool crash_mouse_block(bool must_show=1)//鼠标是否碰到图片非空格部分 
 		{
 			if(!crash_mouse())return 0;
-			xy mp=Tool::mousexy();
+			xy mp=Tool::get_mouse_xy();
 			mp=(xy){mp.x-pxy.x,mp.y-pxy.y};
 			if(!hidemode || !must_show)
 				if(g[mp.x][mp.y]!=' ')
@@ -849,7 +885,7 @@ class Item
 		{
 			return move_key(1,1,1,1,speed);
 		}
-		bool move_key_def(bool i,bool b,int l,int r,char w,char s,char a,char d,int speed=1)
+		bool move_key_def(bool i,bool b,bool l,bool r,char w,char s,char a,char d,int speed=1)
 		{
 			bool f=1;
 			if(i && KEYDOWN(w))
@@ -865,13 +901,6 @@ class Item
 		bool move_key_def(char w,char s,char a,char d,int speed=1)
 		{
 			return move_key_def(1,1,1,1,w,s,a,d,speed);
-		}
-		void print(xy p)
-		{
-			xy fp=pxy;
-			pxy=p;
-			draw();
-			pxy=fp;
 		}
 };
 Item FEItem(xy pos,int len,string picture,int hidemode=0)
@@ -959,7 +988,7 @@ class Main
 		}
 };
 
-namespace Physics
+namespace Physics//开发中... 
 {
 	double p_g=9.8;
 	class EP_Item:public Item//Easy_Physics_Item

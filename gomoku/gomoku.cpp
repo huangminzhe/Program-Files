@@ -58,7 +58,7 @@ int main(int argc, char **argv){
 			help();
 		}
 
-		xy mxy = Tool::mousexy();
+		xy mxy = Tool::get_mouse_xy();
 		if (mxy.x >= 0 && mxy.x <= 6 && mxy.y == 0){
 			a[op].group_use("unselected");
 			op = 0;
