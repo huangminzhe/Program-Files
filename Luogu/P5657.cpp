@@ -7,20 +7,19 @@ ull qpow(int x,int y){
 	return a * a * (y & 1?x:1);
 }
 int main(int argc, char **argv){
-	int n;ull k;
+	int n;ull k,p;
 	cin >> n >> k;
 	n--;
-	bool flag = k < qpow(2,n);
+	p = qpow(2,n);
+	bool flag = k >= p;
 	while (n){
 		n--;
-		if (flag){
-			cout << 0;
-			flag = k < qpow(2,n);
-		}else{
-			cout << 1;
-			flag = k > qpow(2,n);
-		}
+		cout << flag;
+		printf(" %llu ",p);
+		if (flag)	k -= p,k = p - k - 1;
+		p = qpow(2,n);
+		flag = flag?k >= p:k < p;
 	}
-	cout << !flag;
+	cout << flag;
 	return 0;
 }
