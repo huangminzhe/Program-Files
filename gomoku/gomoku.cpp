@@ -13,10 +13,10 @@ void show(){
 }
 void help(){
 	system("cls");
-	cout << "点击Esc键返回\n"
+	cout << "按Enter键返回\n"
 			"使用“W”“S”“↑”“↓”或移动鼠标进行选择\n"
 			"使用“Enter”或鼠标左键进行确认\n";
-	while (!KEYDOWN(VK_ESCAPE));
+	while (!KEYDOWN(VK_RETURN));
 }
 void choose(int8 op){
 	if (op == 0){
