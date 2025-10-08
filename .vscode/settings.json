@@ -117,5 +117,10 @@
 		"plaintext": false,
 		"markdown": false,
 		"scminput": false
-	}
+	},
+	"files.candidateGuessEncodings": [
+		"utf8",
+		"gb2312"
+	],
+	"files.autoGuessEncoding": true
 }
