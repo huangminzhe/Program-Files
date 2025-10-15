@@ -20,23 +20,23 @@ bool check_path(int u,int v){
 bool bfs(int s){
 	priority_queue<point> q;
 	mony[s] = d;
+	p[s][s] = 1;
 	q.push({s,0});
 	while (!q.empty()){
 		int u = q.top().v,uw = q.top().w;
 		q.pop();
 		if (f[u])	continue;
 		f[u] = 1;
-		p[u][u] = 1;
 		for (auto i : g[u]){
 			int v = i.v,w = i.w;
-			if (mony[u] + w >= mony[v]){
+			if (mony[u] + w > mony[v]){
 //				printf("%d %d %d+%d=%d %d\n",u,v,mony[u],w,mony[u] + w,mony[v]);
 				if (!check_path(u,v)){
 					f[v] = 0;
 					for (int i = 1;i <= n;i++){
 						p[v][i] = p[u][i];
 					}
-					p[v][u] = 1;
+					p[v][v] = 1;
 					mony[v] = mony[u] + w;
 					q.push({v,mony[u] + w});
 				}else{
@@ -48,9 +48,9 @@ bool bfs(int s){
 	return 0;
 }
 int main(int argc, char **argv){
-#ifdef LOCAL
-	freopen("A.in","r",stdin);
-#endif 
+// #ifdef LOCAL
+// 	freopen("A.in","r",stdin);
+// #endif 
 	cin >> d >> m1 >> n >> m2 >> s;
 	for (int i = 1;i <= m1;i++){
 		int u,v;
