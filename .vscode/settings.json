@@ -7,7 +7,7 @@
     "editor.insertSpaces": false,
 	"editor.detectIndentation": false,
 	"code-runner.executorMap": {
-		"cpp": "cd $dir && g++ -fexec-charset=GBK $fileName -o temporary.exe -O2 -std=c++17 -Wall -g3 -Wl,--stack=512870936 -DLOCAL -static -lws2_32 -g3 && $dirtemporary",
+		"cpp": "cd $dir && g++ -fexec-charset=GBK $fileName -o temporary.exe -O2 -std=c++17 -Wall -g3 -Wl,--stack=512870936 -DLOCAL -static -lws2_32 -g3 && start cmd /C \"$dirtemporary & echo. & pause\"",
 		"python": "cd $dir && python -u $fullFileName"
 	},
 	"code-runner.saveFileBeforeRun": true,
