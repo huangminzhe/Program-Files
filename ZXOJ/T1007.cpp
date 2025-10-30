@@ -7,14 +7,37 @@ int dx[] = {-1,1,0,0},dy[] = {0,0,-1,1};
 set<pii> blks,pts;	// 障碍物；关键点
 set<int> blkx[N],blky[N];	// x=i的障碍物；y=i的障碍物
 map<pii,int> id;	// 关键点编号
-vector<int> g[N * 4];
+vector<int> g[N * 4],e;	// 图；终点
 
-pii check_left(pii p){;
+pii find_up(pii p){
+	int x = p.first,y = p.second;
+	auto it = lower_bound(blky[y].begin(),blky[y].end(),x);
+	if (it == blky[y].begin() || *(--it) == x)	return p;
+	it--;
+	return {*it + 1,y};
+}
+pii find_down(pii p){
+	int x = p.first,y = p.second;
+	auto it = upper_bound(blky[y].begin(),blky[y].end(),x);
+	if (it == blky[y].end())	return p;
+	it++;
+	return {*it - 1,y};
+}
+pii find_left(pii p){
 	int x = p.first,y = p.second;
 	auto it = lower_bound(blkx[x].begin(),blkx[x].end(),y);
-	if (*it >= y)	return p;
+	if (it == blkx[x].begin() || *(--it) == y)	return p;
+	it--;
+	return {x,*it + 1};
 }
-pii (*fdnxt[4])(pii) = {};
+pii find_right(pii p){
+	int x = p.first,y = p.second;
+	auto it = upper_bound(blkx[x].begin(),blkx[x].end(),y);
+	if (it == blkx[x].end())	return p;
+	it++;
+	return {x,*it - 1};
+}
+pii (*fdnxt[])(pii) = {find_up,find_down,find_left,find_right};
 
 int main(int argc, char **argv){
 	cin >> n >> m >> sx >> sy;
@@ -36,6 +59,11 @@ int main(int argc, char **argv){
 			if (blks.find({xi,yi}) == blks.end())	pts.insert({xi,yi});
 		}
 	}
+	for (int i = 1;i <= m;i++){
+		int x,y;
+		cin >> x >> y;
+		e.push_back({x,y});
+	}
 	// 给关键点编号
 	for (auto i : pts){
 		id[i] = ++tot;
@@ -45,7 +73,10 @@ int main(int argc, char **argv){
 		int x = i.first,y = i.second;
 		for (int I = 0;I < 4;I++){
 			int xi = x + dx[I],yi = y + dy[I];
-			g[id[i]].push_back();
+			pii nxt = fdnxt[I]({xi,yi});
+			if (nxt != make_pair(xi,yi)){
+				g[id[i]].push_back(id[nxt]);
+			}
 		}
 	}
 	return 0;
