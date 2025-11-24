@@ -9,7 +9,7 @@
 	"code-runner.executorMap": {
 		"cpp": "cd $dir && g++ -fexec-charset=GBK $fileName -o temporary.exe -O2 -std=c++17 -Wall -g3 -Wl,--stack=512870936 -DLOCAL -static -lws2_32 -g3 && start cmd /C \"$dirtemporary & echo. & pause\"",
 		// "cpp": "cd $dir && g++ -fexec-charset=GBK $fileName -o $fileNameWithoutExt -O2 -std=c++17 -Wall -g3 -Wl,--stack=512870936 -DLOCAL -static -lws2_32 -g3 && start cmd /C \"$dir$fileNameWithoutExt & echo. & pause\"",
-		"python": "cd $dir && \"D:\\Program Files\\Python311\\python.exe\" -u $fullFileName"
+		"python": "cd $dir && python $fullFileName"
 	},
 	"code-runner.saveFileBeforeRun": true,
 	"code-runner.runInTerminal": true,
