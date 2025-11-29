@@ -33,7 +33,7 @@ class SystemMonitor:
         # 数据存储（使用deque保持固定长度的历史数据）
         self.history_length = 60  # 保留最近60个数据点
         self.cpu_history = deque([0] * self.history_length, maxlen=self.history_length)
-        self.memory_history = deque([0] * self.history_length, maxlen=self.history_length)
+        self.memory_history = deque([0] * self.history_length, maxlen=self.history_length)  # 存储内存使用量(GB)
         self.gpu_history = deque([0] * self.history_length, maxlen=self.history_length)
         
         # 存储磁盘读写历史数据（按磁盘分开）
@@ -43,6 +43,9 @@ class SystemMonitor:
         # 存储网络历史数据（按接口分开）
         self.network_upload_histories = {}
         self.network_download_histories = {}
+        
+        # 获取总内存大小(GB)
+        self.total_memory_gb = psutil.virtual_memory().total / (1024 ** 3)
         
         # 初始化磁盘和网络统计
         self.old_disk_io = psutil.disk_io_counters(perdisk=True)
@@ -146,13 +149,15 @@ class SystemMonitor:
                                         bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
         
         # 内存图表
-        self.memory_ax.set_title('内存使用率')
-        self.memory_ax.set_ylim(0, 100)
+        self.memory_ax.set_title('内存使用量')
+        # 设置Y轴范围为0到总内存大小，留10%余量
+        self.memory_ax.set_ylim(0, self.total_memory_gb * 1.1)
         self.memory_ax.set_xlim(0, self.history_length)
         self.memory_line, = self.memory_ax.plot(range(self.history_length), self.memory_history, 'b-')
+        self.memory_ax.set_ylabel('使用量 (GB)')
         self.memory_ax.grid(True, alpha=0.3)
         
-        # 添加内存使用率文本
+        # 添加内存使用量文本
         self.memory_text = self.memory_ax.text(0.02, 0.95, '', transform=self.memory_ax.transAxes, fontsize=12,
                                               bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
         
@@ -177,7 +182,14 @@ class SystemMonitor:
         
         # 更新内存图表
         self.memory_line.set_ydata(self.memory_history)
-        self.memory_text.set_text(f'当前: {self.memory_history[-1]:.1f}%')
+        
+        # 获取当前内存使用情况
+        memory = psutil.virtual_memory()
+        memory_used_gb = memory.used / (1024 ** 3)
+        memory_percent = memory.percent
+        
+        # 更新内存文本显示
+        self.memory_text.set_text(f'当前: {memory_used_gb:.1f} GB\n({memory_percent:.1f}%)')
         
         # 更新GPU图表
         self.gpu_line.set_ydata(self.gpu_history)
@@ -420,16 +432,22 @@ class SystemMonitor:
         self.old_network_stats = psutil.net_io_counters(pernic=True)
         time.sleep(1)  # 等待1秒获取初始数据
         
+        # 使用精确计时器
+        next_time = time.time()
+        
         while self.monitoring:
             try:
+                # 记录开始时间
+                start_time = time.time()
+                
                 # 更新CPU信息
-                cpu_percent = psutil.cpu_percent(interval=0.5)
+                cpu_percent = psutil.cpu_percent(interval=0.1)  # 减少CPU检测间隔
                 self.cpu_history.append(cpu_percent)
                 
-                # 更新内存信息
+                # 更新内存信息 - 存储实际使用的GB数
                 memory = psutil.virtual_memory()
-                memory_percent = memory.percent
-                self.memory_history.append(memory_percent)
+                memory_used_gb = memory.used / (1024 ** 3)
+                self.memory_history.append(memory_used_gb)
                 
                 # 更新GPU信息
                 try:
@@ -443,10 +461,17 @@ class SystemMonitor:
                 except Exception as e:
                     self.gpu_history.append(0)
                 
+                # 计算精确的等待时间
+                elapsed = time.time() - start_time
+                sleep_time = max(0, 1.0 - elapsed)  # 确保总时间正好是1秒
+                
+                # 使用精确的sleep
+                time.sleep(sleep_time)
+                
             except Exception as e:
                 print(f"监控更新错误: {e}")
-                
-            time.sleep(1)  # 每1秒更新一次
+                # 出错时也保持1秒间隔
+                time.sleep(1)
 
 def main():
     root = tk.Tk()
