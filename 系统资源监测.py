@@ -137,8 +137,8 @@ class SystemMonitor:
         self.init_summary_charts()
         
     def init_summary_charts(self):
-        # CPU图表
-        self.cpu_ax.set_title('CPU使用率')
+        # CPU图表 - 简化为"CPU"
+        self.cpu_ax.set_title('CPU')
         self.cpu_ax.set_ylim(0, 100)
         self.cpu_ax.set_xlim(0, self.history_length)
         self.cpu_line, = self.cpu_ax.plot(range(self.history_length), self.cpu_history, 'r-')
@@ -148,21 +148,21 @@ class SystemMonitor:
         self.cpu_text = self.cpu_ax.text(0.02, 0.95, '', transform=self.cpu_ax.transAxes, fontsize=12, 
                                         bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
         
-        # 内存图表
-        self.memory_ax.set_title('内存使用量')
+        # 内存图表 - 简化为"内存"
+        self.memory_ax.set_title('内存')
         # 设置Y轴范围为0到总内存大小，留10%余量
         self.memory_ax.set_ylim(0, self.total_memory_gb * 1.1)
         self.memory_ax.set_xlim(0, self.history_length)
         self.memory_line, = self.memory_ax.plot(range(self.history_length), self.memory_history, 'b-')
-        self.memory_ax.set_ylabel('使用量 (GB)')
+        self.memory_ax.set_ylabel('GB')  # 简化为"GB"
         self.memory_ax.grid(True, alpha=0.3)
         
-        # 添加内存使用量文本
+        # 添加内存使用量文本 - 只显示GB，不显示百分比
         self.memory_text = self.memory_ax.text(0.02, 0.95, '', transform=self.memory_ax.transAxes, fontsize=12,
                                               bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
         
-        # GPU图表
-        self.gpu_ax.set_title('GPU使用率')
+        # GPU图表 - 简化为"GPU"
+        self.gpu_ax.set_title('GPU')
         self.gpu_ax.set_ylim(0, 100)
         self.gpu_ax.set_xlim(0, self.history_length)
         self.gpu_line, = self.gpu_ax.plot(range(self.history_length), self.gpu_history, 'g-')
@@ -186,10 +186,9 @@ class SystemMonitor:
         # 获取当前内存使用情况
         memory = psutil.virtual_memory()
         memory_used_gb = memory.used / (1024 ** 3)
-        memory_percent = memory.percent
         
-        # 更新内存文本显示
-        self.memory_text.set_text(f'当前: {memory_used_gb:.1f} GB\n({memory_percent:.1f}%)')
+        # 更新内存文本显示 - 只显示GB，不显示百分比
+        self.memory_text.set_text(f'当前: {memory_used_gb:.1f} GB')
         
         # 更新GPU图表
         self.gpu_line.set_ydata(self.gpu_history)
@@ -244,10 +243,10 @@ class SystemMonitor:
             pos = row * cols + col + 1
             
             ax = self.disk_fig.add_subplot(rows, cols, pos)
-            ax.set_title(f'{disk} 读写速度')
+            ax.set_title(f'{disk}')  # 简化为只显示磁盘名称
             ax.set_ylabel('速度 (MB/s)')
             ax.set_xlabel('时间 (秒)')
-            ax.set_ylim(0, 100)  # 固定量程为0-100MB/s
+            ax.set_ylim(0, 10)  # 初始量程为0-10MB/s
             ax.set_xlim(0, self.history_length)
             
             read_line, = ax.plot(range(self.history_length), self.disk_read_histories[disk], 'r-', linewidth=1.5, label='读取')
@@ -305,7 +304,10 @@ class SystemMonitor:
                 self.disk_read_texts[disk].set_text(f'读取: {disk_read_speed:.2f} MB/s')
                 self.disk_write_texts[disk].set_text(f'写入: {disk_write_speed:.2f} MB/s')
                 
-                # 不再动态调整Y轴范围，保持固定0-100MB/s
+                # 动态调整Y轴范围
+                max_speed = max(max(self.disk_read_histories[disk]), max(self.disk_write_histories[disk]))
+                y_max = max(10, max_speed * 1.2)  # 至少10MB/s，留20%余量
+                self.disk_axes[disk].set_ylim(0, y_max)
         
         # 更新磁盘统计
         self.old_disk_io = new_disk_io
@@ -357,10 +359,10 @@ class SystemMonitor:
             pos = row * cols + col + 1
             
             ax = self.network_fig.add_subplot(rows, cols, pos)
-            ax.set_title(f'{interface} 网络速度')
+            ax.set_title(f'{interface}')  # 简化为只显示网络接口名称
             ax.set_ylabel('速度 (MB/s)')
             ax.set_xlabel('时间 (秒)')
-            ax.set_ylim(0, 100)  # 固定量程为0-100MB/s
+            ax.set_ylim(0, 1)  # 初始量程为0-1MB/s
             ax.set_xlim(0, self.history_length)
             
             upload_line, = ax.plot(range(self.history_length), self.network_upload_histories[interface], 'r-', linewidth=1.5, label='上传')
@@ -418,7 +420,10 @@ class SystemMonitor:
                 self.network_upload_texts[interface].set_text(f'上传: {upload_speed:.2f} MB/s')
                 self.network_download_texts[interface].set_text(f'下载: {download_speed:.2f} MB/s')
                 
-                # 不再动态调整Y轴范围，保持固定0-100MB/s
+                # 动态调整Y轴范围
+                max_speed = max(max(self.network_upload_histories[interface]), max(self.network_download_histories[interface]))
+                y_max = max(1, max_speed * 1.2)  # 至少1MB/s，留20%余量
+                self.network_axes[interface].set_ylim(0, y_max)
         
         # 更新网络统计
         self.old_network_stats = new_network_stats
