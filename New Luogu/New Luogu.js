@@ -59,6 +59,45 @@
 		});
 	}
 
+	function md2HTML(md){
+		let HTML = md;
+
+		HTML.replace(/^```(\w*)(?: +(line-numbers)|lines=(\d+\-\d+))?(?: +(line-numbers)|lines=(\d+\-\d+))?.*?\n([\s\S]*?)\n```$/gm,function(match,lang,n1,l1,n2,l2,code){
+			const langlst = {
+
+			};
+
+			if (!lang)	lang = 'plain';
+			else if (!(lang in langlst))
+
+			let res = `
+<div data-v-a7061ca4="" class="code-container">
+	<pre data-v-a7061ca4="" `;
+			res += `
+			<span aria-hidden="true" class="line-numbers-rows">
+				<span style="height: 21px;"></span>
+				<span style="height: 21px;"></span>
+				<span style="height: 21px;"></span>
+				<span style="height: 21px;"></span>
+			</span>
+			<span class="line-numbers-sizer" style="display: none;"></span>
+		</code>
+		<div aria-hidden="true" data-range="1-3" class=" line-highlight" style="top: 0px; height: 63px; width: 741px;"></div>
+	</pre>
+	<button data-v-a7061ca4="" type="button" class="copy-button">
+		<svg data-v-a7061ca4="" class="svg-inline--fa fa-copy copy-icon" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="copy" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+			<path class="" fill="currentColor" d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"></path>
+		</svg>
+	</button>
+</div>
+`;
+			return res;
+		});
+
+		HTML = marked.parse(HTML);
+		return HTML;
+	}
+
 	// 于个人主页装填个人简介
 	let lastUrl = location.href;
 	let timer = null;
@@ -71,7 +110,7 @@
 			}
 
 			const userInfoMD = await getIntroduction();
-			const userInfoHTML = marked.parse(userInfoMD);
+			const userInfoHTML = md2HTML(userInfoMD);
 			console.log('获取到用户简介:',userInfoHTML);
 
 			const parent = document.querySelectorAll('div.main')[1];	// 父容器
