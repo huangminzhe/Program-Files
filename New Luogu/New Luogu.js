@@ -59,30 +59,41 @@
 		});
 	}
 
+	/**
+	 * 将 Markdown 文本转换成 HTML 文本
+	 * @param {string} md Markdown 文本
+	 * @returns HTML 文本
+	 */
 	function md2HTML(md){
-		let HTML = md;
+		let HTML = md.replace(/^```(\w*)(?: +(line-numbers))?.*?\n([\s\S]*?)\n```$/gm,function(match,lang,n,code){
+			console.log('代码块 match 调试:',match);
 
-		HTML.replace(/^```(\w*)(?: +(line-numbers)|lines=(\d+\-\d+))?(?: +(line-numbers)|lines=(\d+\-\d+))?.*?\n([\s\S]*?)\n```$/gm,function(match,lang,n1,l1,n2,l2,code){
-			const langlst = {
+			const langlst = [
+				'plain',
+				'cpp',
+				'python',
+				'c',
+				'java',
+				'javascript',
+				'markdown',
+				'latex'
+			];
 
-			};
-
-			if (!lang)	lang = 'plain';
-			else if (!(lang in langlst))
+			if (!lang){
+				lang = 'plain';
+			}else if (!langlst.includes(lang)){
+				lang = 'cpp';
+			}
 
 			let res = `
 <div data-v-a7061ca4="" class="code-container">
-	<pre data-v-a7061ca4="" `;
-			res += `
+	<pre data-v-a7061ca4="" data-line="" class="pre line-numbers ${n?' ':'hide-numbers '}language-${lang}" tabindex="0">
+		<code data-v-a7061ca4="" class="language-${lang}">
+			"${code}"
 			<span aria-hidden="true" class="line-numbers-rows">
-				<span style="height: 21px;"></span>
-				<span style="height: 21px;"></span>
-				<span style="height: 21px;"></span>
-				<span style="height: 21px;"></span>
 			</span>
 			<span class="line-numbers-sizer" style="display: none;"></span>
 		</code>
-		<div aria-hidden="true" data-range="1-3" class=" line-highlight" style="top: 0px; height: 63px; width: 741px;"></div>
 	</pre>
 	<button data-v-a7061ca4="" type="button" class="copy-button">
 		<svg data-v-a7061ca4="" class="svg-inline--fa fa-copy copy-icon" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="copy" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -91,8 +102,10 @@
 	</button>
 </div>
 `;
+			console.log('代码块 res 调试:',res);
 			return res;
 		});
+		console.log("简单转换:",HTML);
 
 		HTML = marked.parse(HTML);
 		return HTML;
