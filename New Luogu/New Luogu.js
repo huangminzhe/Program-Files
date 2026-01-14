@@ -14,6 +14,16 @@
 	const IntroducitonID = 'New Luogu Introduction';
 
 	/**
+	 * 统计字符串行数
+	 * @param {string} str 要统计行数的字符串
+	 * @returns 字符串行数
+	 */
+	function countLine(str){
+		const match = str.match(/\r\n|\n/g);
+		return match?match.length + 1:1;
+	}
+
+	/**
 	 * @returns 用户 UID
 	 */
 	function getUID(){
@@ -84,13 +94,25 @@
 			}else if (!langlst.includes(lang)){
 				lang = 'cpp';
 			}
+			const ln = '				<span style="height: 21px;"></span>\n'.repeat(countLine(code));
+			code.replace(/[<>&"']/g,function(m){
+				switch (m){
+					case '&':	return '&amp;';
+					case '<':	return '&lt;';
+					case '>':	return '&gt;';
+					case '"':	return '&quot;';
+					case "'":	return '&#39;';
+					default:	return m;
+				}
+			});
 
 			let res = `
 <div data-v-a7061ca4="" class="code-container">
 	<pre data-v-a7061ca4="" data-line="" class="pre line-numbers ${n?' ':'hide-numbers '}language-${lang}" tabindex="0">
 		<code data-v-a7061ca4="" class="language-${lang}">
-			"${code}"
+			${code}
 			<span aria-hidden="true" class="line-numbers-rows">
+${ln}
 			</span>
 			<span class="line-numbers-sizer" style="display: none;"></span>
 		</code>
