@@ -123,5 +123,6 @@
 		"utf8",
 		"gb2312"
 	],
-	"files.autoGuessEncoding": true
+	"files.autoGuessEncoding": true,
+	"git.enableSmartCommit": true
 }
