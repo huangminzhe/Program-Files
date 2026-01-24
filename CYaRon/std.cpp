@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 // #define decode(st) {0,st & 3,st >> 2 & 3,st >> 4 & 3,st >> 6 & 3}
-const int N = 7,M = 10;
+const int N = 5,M = 10;
 // N：物品/分区个数；M：边界
 
 struct block{
@@ -27,9 +27,9 @@ int n,m,ansst;
 int tot;	// 状态数
 vector<state> st[N],dp[N];
 
-array<int,N> decode(int i);	// 每个物品有多少个（将状态解码）
-bool canplace(vector<vector<bool>> f,array<int,N> il,int bi,int idx,int num);	// il的物品组合是否能放入分区bi内
-vector<state> init(int bi);
+array<int,N> decode(int);	// 每个物品有多少个（将状态解码）
+bool canplace(vector<vector<bool>>&,array<int,N>,int,int,int);	// il的物品组合是否能放入分区bi内
+vector<state> init(int);
 
 int main(int argc, char **argv){
 	cin >> n;
@@ -42,13 +42,14 @@ int main(int argc, char **argv){
 	}
 
 	tot = 1;
-	for (int i = 1;i <= m;i++)	tot *= 3;
+	for (int i = 1;i <= m;i++)	tot *= 4;
 	// 计算每个分区的组合情况
 	for (int i = 1;i <= n;i++){
 		st[i] = init(i);
 	}
 
 	// DP
+	for (int i = 0;i <= n;i++)	dp[i] = vector<state>(tot);
 	dp[0][0].ok = 1;
 	for (int i = 1;i <= n;i++){
 		dp[i][0].ok = 1;
@@ -69,7 +70,8 @@ int main(int argc, char **argv){
 					if (dej[I] + dek[I] > a[I].c)	goto cont;
 				}
 
-				dp[i][j + k] = max(dp[i][j + k],{1,dp[i - 1][j].v + st[i][k].v,dp[i - 1][j].b + st[i][j].b});
+				// 由于进行过数量检测，所以可以直接相加，没有进位问题
+				dp[i][j + k] = max(dp[i][j + k],{1,dp[i - 1][j].v + st[i][k].v,dp[i - 1][j].b + st[i][k].b});
 
 				cont:
 			}
@@ -110,7 +112,7 @@ vector<state> init(int bi){
 		if (zgs > bx * by)
 			goto cont;
 
-		while (!dec[sti] && sti < m)	sti++;
+		while (!dec[sti] && sti <= m)	sti++;
 		if (canplace(f,dec,bi,sti,0)){
 			res[st] = {1,zv,bx * by - zgs};
 		}
@@ -119,10 +121,15 @@ vector<state> init(int bi){
 	}
 	return res;
 }
-array<int,N> decode(int i){	// 可使用define代替
-	return {0,i & 3,i >> 2 & 3,i >> 4 & 3,i >> 6 & 3};
+array<int,N> decode(int st){	// 可使用define代替
+	array<int,N> res = {0};
+	for (int i = 1;i <= m;i++){
+		res[i] = st & 3;
+		st >>= 2;
+	}
+	return res;
 }
-bool canplace(vector<vector<bool>> f,array<int,N> il,int bi,int idx,int num){	// il：物品数量数组
+bool canplace(vector<vector<bool>> &f,array<int,N> il,int bi,int idx,int num){	// il：物品数量数组
 	if (idx > m){
 		return 1;
 	}
@@ -137,6 +144,7 @@ bool canplace(vector<vector<bool>> f,array<int,N> il,int bi,int idx,int num){	//
 	// 搜索
 	for (int i = 1;i <= bx - cx + 1;i++){
 		for (int j = 1;j <= by - cy + 1;j++){
+			int ni = idx,nn = num + 1;
 			// 检测是否能放入
 			for (int x = i;x < i + cx;x++){
 				for (int y = j;y < j + cy;y++){
@@ -145,13 +153,12 @@ bool canplace(vector<vector<bool>> f,array<int,N> il,int bi,int idx,int num){	//
 				}
 			}
 
+// printf("%d %d %d %d %d %d\n",bi,idx,num,il[idx],i,j);
 			for (int x = i;x < i + cx;x++){
 				for (int y = j;y < j + cy;y++){
 					f[x][y] = 1;
 				}
 			}
-			int ni,nn;
-			ni = idx,nn = num + 1;
 			if (nn == il[idx]){
 				ni++,nn = 0;
 				while (ni <= m && !il[ni])	ni++;
