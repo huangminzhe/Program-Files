@@ -1,119 +1,258 @@
 pack1.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack2.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack3.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack4.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack5.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack6.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack7.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack8.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack9.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack10.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 3
 
 pack11.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack12.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack13.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack14.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack15.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack16.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack17.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack18.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack19.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
 
 pack20.in:
   timeLimit: 1000
-  memoryLimit: 256000
+  memoryLimit: 262144
   score: 20
   subtaskId: 5
+
+pack21.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 1
+
+pack22.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 1
+
+pack23.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 1
+
+pack24.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 1
+
+pack25.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 1
+
+pack26.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 2
+
+pack27.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 2
+
+pack28.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 2
+
+pack29.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 2
+
+pack30.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 10
+  subtaskId: 2
+
+pack31.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 4
+
+pack32.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 4
+
+pack33.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 4
+
+pack34.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 4
+
+pack35.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 4
+
+pack36.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack37.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack38.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack39.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack40.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack41.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 0
+  subtaskId: 0
+
+pack42.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 0
+  subtaskId: 0
+
+pack43.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 0
+  subtaskId: 0
+
