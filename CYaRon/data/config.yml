@@ -1,258 +1,300 @@
 pack1.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack2.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack3.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack4.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack5.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack6.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack7.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack8.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack9.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack10.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 3
+  score: 10
+  subtaskId: 2
 
 pack11.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack12.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack13.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack14.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack15.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack16.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack17.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack18.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack19.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack20.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 5
+  subtaskId: 4
 
 pack21.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 1
+  subtaskId: 0
 
 pack22.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 1
+  subtaskId: 0
 
 pack23.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 1
+  subtaskId: 0
 
 pack24.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 1
+  subtaskId: 0
 
 pack25.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 1
+  subtaskId: 0
 
 pack26.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 2
+  subtaskId: 1
 
 pack27.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 2
+  subtaskId: 1
 
 pack28.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 2
+  subtaskId: 1
 
 pack29.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 2
+  subtaskId: 1
 
 pack30.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 10
-  subtaskId: 2
+  subtaskId: 1
 
 pack31.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 4
+  score: 10
+  subtaskId: 3
 
 pack32.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 4
+  score: 10
+  subtaskId: 3
 
 pack33.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 4
+  score: 10
+  subtaskId: 3
 
 pack34.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 4
+  score: 10
+  subtaskId: 3
 
 pack35.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 20
-  subtaskId: 4
+  score: 10
+  subtaskId: 3
 
 pack36.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 6
+  subtaskId: 5
 
 pack37.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 6
+  subtaskId: 5
 
 pack38.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 6
+  subtaskId: 5
 
 pack39.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 6
+  subtaskId: 5
 
 pack40.in:
   timeLimit: 1000
   memoryLimit: 262144
   score: 20
-  subtaskId: 6
+  subtaskId: 5
 
 pack41.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 0
-  subtaskId: 0
+  score: 20
+  subtaskId: 6
 
 pack42.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 0
-  subtaskId: 0
+  score: 20
+  subtaskId: 6
 
 pack43.in:
   timeLimit: 1000
   memoryLimit: 262144
-  score: 0
-  subtaskId: 0
+  score: 20
+  subtaskId: 6
+
+pack44.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack45.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack46.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack47.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack48.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack49.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
+
+pack50.in:
+  timeLimit: 1000
+  memoryLimit: 262144
+  score: 20
+  subtaskId: 6
 
