@@ -15,43 +15,45 @@ double rddouble(double l,double r){
 }
 
 int main(int argc, char **argv){
-	system("g++ std.cpp -o std");
-	for (int id = 1;id <= 10;id++){
-		string inp = "./data/pack" + to_string(id) + ".in",out = "./data/pack" + to_string(id) + ".out";
+	system("g++ std.cpp -o std -O2 -std=c++17 -Wl,--stack=512870936 -static");
+	for (int id = 41;id <= 50;id++){
+		string inp = "pack" + to_string(id) + ".in",out = "pack" + to_string(id) + ".out";
 		freopen(inp.c_str(),"w",stdout);
 
-		int n = rdint(2,3);
+		int n = 4;
 		printf("%d\n",n);
 		for (int i = 1;i <= n;i++){
-			printf("%d %d\n",rdint(1,5),rdint(1,6));
+			printf("%d %d\n",rdint(1,9),rdint(1,9));
 		}
-		int m = rdint(3,4);
+		int m = 5;
 		printf("%d\n",m);
 		for (int i = 1;i <= m;i++){
 			printf("%d %d %d %d\n",rdint(1,3),rdint(1,100000000),rdint(1,4),rdint(1,4));
 		}
 
 		fclose(stdout);
+		printf("%d started.",id);
 		system(("std.exe < " + inp + " > " + out).c_str());
+		printf("%d ended.",id);
 	}
-	for (int id = 11;id <= 20;id++){
-		string inp = "./data/pack" + to_string(id) + ".in",out = "./data/pack" + to_string(id) + ".out";
-		freopen(inp.c_str(),"w",stdout);
+	// for (int id = 11;id <= 20;id++){
+	// 	string inp = "./data/pack" + to_string(id) + ".in",out = "./data/pack" + to_string(id) + ".out";
+	// 	freopen(inp.c_str(),"w",stdout);
 
-		int n = rdint(3,4);
-		printf("%d\n",n);
-		for (int i = 1;i <= n;i++){
-			printf("%d %d\n",rdint(1,5),rdint(1,9));
-		}
-		int m = 4;
-		printf("%d\n",m);
-		for (int i = 1;i <= m;i++){
-			printf("%d %d %d %d\n",rdint(1,3),rdint(1,100000000),rdint(1,4),rdint(1,4));
-		}
+	// 	int n = rdint(3,4);
+	// 	printf("%d\n",n);
+	// 	for (int i = 1;i <= n;i++){
+	// 		printf("%d %d\n",rdint(1,5),rdint(1,9));
+	// 	}
+	// 	int m = 4;
+	// 	printf("%d\n",m);
+	// 	for (int i = 1;i <= m;i++){
+	// 		printf("%d %d %d %d\n",rdint(1,3),rdint(1,100000000),rdint(1,4),rdint(1,4));
+	// 	}
 
-		fclose(stdout);
-		system(("std.exe < " + inp + " > " + out).c_str());
-	}
+	// 	fclose(stdout);
+	// 	system(("std.exe < " + inp + " > " + out).c_str());
+	// }
 	return 0;
 }
 /*

@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-// #define decode(st) {0,st & 3,st >> 2 & 3,st >> 4 & 3,st >> 6 & 3}
-const int N = 5,M = 10;
+const int N = 10,M = 10;
 // N：物品/分区个数；M：边界
 
 struct block{
@@ -121,7 +120,7 @@ vector<state> init(int bi){
 	}
 	return res;
 }
-array<int,N> decode(int st){	// 可使用define代替
+array<int,N> decode(int st){
 	array<int,N> res = {0};
 	for (int i = 1;i <= m;i++){
 		res[i] = st & 3;
